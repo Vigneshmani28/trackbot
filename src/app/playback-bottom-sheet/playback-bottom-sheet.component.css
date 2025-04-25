@@ -1,0 +1,10 @@
+.full-width{
+    display: flex;
+}
+
+.top-right-corner {
+    position: absolute;
+    top: 0;
+    margin: 10px;
+    right: 0;
+}

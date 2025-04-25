@@ -1,0 +1,111 @@
+<h1 mat-dialog-title class="dialog-title">
+    {{ selectedGroup ? selectedGroup.name : 'Create a New Group' }}
+    <mat-divider class="divider"></mat-divider>
+</h1>
+
+<div mat-dialog-content class="dialog-content">
+    <!-- Show Create Group Form if no group selected -->
+    <ng-container *ngIf="!selectedGroup">
+        <div class="create-group-section">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Group Name</mat-label>
+                <input matInput [(ngModel)]="groupName" />
+                <mat-hint *ngIf="isDuplicateGroupName" class="error-hint">
+                    Group name already exists
+                </mat-hint>
+            </mat-form-field>
+
+            <button
+                mat-flat-button
+                color="primary"
+                (click)="addGroup()"
+                [disabled]="!groupName.trim() || isDuplicateGroupName"
+                class="action-button"
+            >
+                Create Group
+            </button>
+        </div>
+
+        <mat-divider class="section-divider"></mat-divider>
+
+        <h3 class="section-header">Existing Groups</h3>
+        <mat-list class="modern-list">
+            <mat-list-item *ngFor="let group of groups" (click)="selectGroup(group)" class="list-item">
+                <div class="list-item-content">
+                    <mat-icon matListIcon class="list-icon">group</mat-icon>
+                    <span class="list-text">{{ group.name }}</span>
+                    <mat-icon class="chevron-icon">chevron_right</mat-icon>
+                </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="groups.length === 0" class="empty-state">
+                <i>No groups created yet</i>
+            </mat-list-item>
+        </mat-list>
+    </ng-container>
+
+    <!-- Show Trackers if a group is selected -->
+    <ng-container *ngIf="selectedGroup">
+        <div class="group-header">
+            <button mat-icon-button (click)="selectedGroup = null" class="back-button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h3 class="section-header">Trackers in {{ selectedGroup.name }}</h3>
+        </div>
+        
+        <mat-list class="modern-list">
+            <mat-list-item *ngFor="let tracker of selectedGroup.markers" class="list-item">
+                <div class="list-item-content">
+                    <mat-icon matListIcon class="list-icon">location_on</mat-icon>
+                    <span class="list-text">{{ tracker.id }} | {{ tracker.deviceName }}</span>
+                </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="selectedGroup.markers?.length === 0" class="empty-state">
+                <i>No trackers assigned yet</i>
+            </mat-list-item>
+        </mat-list>
+
+        <mat-divider class="section-divider"></mat-divider>
+
+        <h3 class="section-header">Available Trackers</h3>
+        <mat-list class="modern-list">
+            <ng-container *ngFor="let tracker of markers">
+                <ng-container *ngIf="isTrackerEligible(tracker)">
+                    <mat-list-item
+                        class="list-item tracker-item"
+                        [class.assigned]="getAssignedGroupName(tracker) && getAssignedGroupName(tracker) !== selectedGroup?.name"
+                        (click)="toggleTracker(tracker)"
+                    >
+                        <div class="list-item-content">
+                            <mat-icon matListIcon class="list-icon">
+                                {{ selectedTrackers.has(tracker.id) ? 'check_box' : 'check_box_outline_blank' }}
+                            </mat-icon>
+                            <span class="list-text">
+                                {{ tracker.id }} | {{ tracker.deviceName }}
+                                <span *ngIf="getAssignedGroupName(tracker) && getAssignedGroupName(tracker) !== selectedGroup?.name" class="assigned-badge">
+                                    {{ 'Already Existed in ' + getAssignedGroupName(tracker) }}
+                                </span>
+                            </span>
+                        </div>
+                    </mat-list-item>
+                </ng-container>
+            </ng-container>
+            <mat-list-item *ngIf="markers.length === 0" class="empty-state">
+                <i>No trackers available</i>
+            </mat-list-item>
+        </mat-list>
+    </ng-container>
+</div>
+
+<div mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button (click)="closeDialog()" class="cancel-button">Cancel</button>
+    <button
+        *ngIf="selectedGroup"
+        mat-flat-button
+        color="primary"
+        (click)="assignTrackersToGroup()"
+        [disabled]="selectedTrackers.size === 0"
+        class="action-button"
+    >
+        Assign Selected
+    </button>
+</div>

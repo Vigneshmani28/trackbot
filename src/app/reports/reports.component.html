@@ -1,0 +1,22 @@
+<mat-form-field class="search-box" appearance="outline">
+  <mat-label>Select Tracker</mat-label>
+  <mat-select (selectionChange)="onTrackerSelected($event)">
+    <mat-option>Select</mat-option>
+    @for (tracker of trackers; track $index) {
+      <mat-option value={{tracker.deviceId}}>{{tracker.deviceName}}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+<button style="margin-left: 20px;"  mat-raised-button color="primary" (click)="showReport()">Show Report</button>
+<mat-card>
+    <table mat-table [dataSource]="dataSource" class="trackers">
+      <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+        <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+        <td mat-cell *matCellDef="let emp">{{ emp[column] }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let emprow; columns: displayedColumns"></tr>
+    </table>
+    <mat-paginator [pageSize]="pageSize" (page)="onPageChange($event)"  ></mat-paginator>
+  </mat-card>

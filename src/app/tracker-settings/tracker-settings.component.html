@@ -1,0 +1,176 @@
+<div class="tracker-details-root">
+    <div class="tracker-details-header-root">
+        <mat-icon class="tracker-header-icon" (click)="goBack.emit()">arrow_back_ios</mat-icon>
+        <span class="tracker-header-title">Settings</span>
+        <mat-icon style="cursor: pointer;" class="tracker-header-icon" (click)="close()">close</mat-icon>
+    </div>
+
+    <div class="tracker-name">
+        <span class="tracker-header-text">{{mockTracker.deviceName}} - {{ tracker.deviceName }}</span>
+    </div>
+
+    <div class="tracker-settings-list">
+        <div class="tracker-settings-item" (click)="openDeviceIntervalDialog(deviceIntervalDialog)">
+            <mat-icon class="settings-icon">schedule</mat-icon>
+            <span class="settings-text">Device Interval</span>
+            <span class="selected-time">{{ selectedInterval || 'Not Set' }}</span>
+            <mat-icon class="settings-arrow">chevron_right</mat-icon>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="tracker-settings-item" (click)="openBlockDeviceDialog(blockDeviceDialog)">
+            <mat-icon class="settings-icon">block</mat-icon>
+            <span class="settings-text">Block Device</span>
+            <mat-icon class="settings-arrow">chevron_right</mat-icon>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="tracker-settings-item" (click)="openUnblockDeviceDialog(unblockDeviceDialog)">
+            <mat-icon class="settings-icon">lock_open</mat-icon>
+            <span class="settings-text">Unblock Device</span>
+            <mat-icon class="settings-arrow">chevron_right</mat-icon>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="tracker-settings-item" (click)="openBatteryInfoDialog(batteryInfoDialog)">
+            <mat-icon class="settings-icon">battery_full</mat-icon>
+            <span class="settings-text">Request Battery Info</span>
+            <mat-icon class="settings-arrow">chevron_right</mat-icon>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="tracker-settings-item" (click)="openChangeNameDialog(changeNameDialog)">
+            <mat-icon class="settings-icon">edit</mat-icon>
+            <span class="settings-text">Change Display Name</span>
+            <mat-icon class="settings-arrow">chevron_right</mat-icon>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="tracker-settings-item" (click)="openSetIconDialog(setIconDialog)">
+            <mat-icon class="settings-icon">image</mat-icon>
+            <span class="settings-text">Set Icon</span>
+            <mat-icon class="settings-arrow">chevron_right</mat-icon>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="tracker-settings-item" (click)="openLocationSharingDialog(setLocationSharingDialog)">
+            <mat-icon class="settings-icon">location_on</mat-icon>
+            <span class="settings-text">Location Sharing</span>
+            <span class="selected-time">{{ isLocationSharingEnabled ? 'Enabled' : 'Disabled' }}</span>
+            <mat-icon class="settings-arrow">chevron_right</mat-icon>
+        </div>
+    </div>
+</div>
+
+<!-- Device Interval Dialog -->
+<ng-template #deviceIntervalDialog>
+    <h2 mat-dialog-title>Set Device Interval</h2>
+    <div mat-dialog-content>
+      <mat-form-field appearance="outline" style="width: 100%; margin-top: 10px;">
+        <mat-label>Device Interval</mat-label>
+        <div style="display: flex;">
+          <input matInput [(ngModel)]="selectedInterval" 
+                 [ngModelOptions]="{standalone: true}" 
+                 placeholder="HH:mm:ss" 
+                 (input)="formatTime()" 
+                 maxlength="8" />
+        </div>
+      </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="saveInterval()">Save</button>
+    </div>
+</ng-template>
+
+<!-- Block Device Dialog -->
+<ng-template #blockDeviceDialog>
+    <h2 mat-dialog-title>Block Device</h2>
+    <div mat-dialog-content>
+      <p>Are you sure you want to block this device?</p>
+      <p class="warning-text">Blocking will prevent the device from sending updates.</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="warn" (click)="blockDevice()">Block</button>
+    </div>
+</ng-template>
+
+<!-- Unblock Device Dialog -->
+<ng-template #unblockDeviceDialog>
+    <h2 mat-dialog-title>Unblock Device</h2>
+    <div mat-dialog-content>
+      <p>Are you sure you want to unblock this device?</p>
+      <p class="info-text">The device will resume sending updates.</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="unblockDevice()">Unblock</button>
+    </div>
+</ng-template>
+
+<!-- Battery Info Dialog -->
+<ng-template #batteryInfoDialog>
+    <h2 mat-dialog-title>Request Battery Info</h2>
+    <div mat-dialog-content>
+      <p>Request the current battery level from the device?</p>
+      <p class="info-text">The device will respond with its battery status on its next update.</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="requestBatteryInfo()">Request</button>
+    </div>
+</ng-template>
+
+<!-- Change Name Dialog -->
+<ng-template #changeNameDialog>
+    <h2 mat-dialog-title>Change Display Name</h2>
+    <div mat-dialog-content>
+      <mat-form-field appearance="outline">
+        <mat-label>New Display Name</mat-label>
+        <input matInput [(ngModel)]="newDisplayName" placeholder="Enter new name">
+      </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="saveDisplayName()">Save</button>
+    </div>
+</ng-template>
+
+<!-- Set Icon Dialog -->
+<ng-template #setIconDialog>
+    <h2 mat-dialog-title>Set Device Icon</h2>
+    <div mat-dialog-content>
+      <div class="icon-grid">
+        <mat-icon *ngFor="let icon of availableIcons" 
+                  (click)="selectedIcon = icon"
+                  [class.selected]="selectedIcon === icon">
+          {{icon}}
+        </mat-icon>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="saveIcon()">Save</button>
+    </div>
+</ng-template>
+
+<!-- Set Icon Dialog -->
+<ng-template #setLocationSharingDialog>
+  <h2 mat-dialog-title>{{ isLocationSharingEnabled ? 'Disable Location Sharing' : 'Enable Location Sharing' }}</h2>
+  <div mat-dialog-content>
+    <p>{{ isLocationSharingEnabled ? 'Your location is currently shared. Would you like to disable it?' : 'Enable location sharing to allow tracking.' }}</p>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="closeDialog()">Cancel</button>
+    <button mat-button color="primary" (click)="toggleLocationSharing()">
+      {{ isLocationSharingEnabled ? 'Disable' : 'Enable' }}
+    </button>
+  </div>
+</ng-template>

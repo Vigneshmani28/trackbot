@@ -1,0 +1,12 @@
+<app-shared-registration 
+  [registrationForm]="companyForm"
+  [isEditMode]="isEditMode"
+  [entityTypes]="companyTypes"
+  [gstVerifyFlag]="gstVerifyFlag"
+  [gstVerifyName]="gstVerifyName"
+  [gstLoading]="gstLoading"
+  [loading]="loading"
+  [entityName]="'company'"
+  (onSubmit)="onSubmit()"
+  (onGstValidate)="gstNumberValidate()"
+></app-shared-registration>

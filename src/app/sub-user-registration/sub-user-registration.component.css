@@ -1,0 +1,75 @@
+.full-width {
+    width: 100%;
+  }
+  
+  .form-container {
+    padding: 20px;
+    max-width: 100%;
+    margin: auto;
+    margin-left: 40px; 
+    margin-right: 40px;
+}
+
+.header-text {
+  font-weight: 600; 
+  font-size: 28px; 
+  letter-spacing: 1.5px; 
+  color: #2C3E50; 
+  text-transform: uppercase; 
+  text-align: center; 
+  padding: 10px 0;
+  border-bottom: 3px solid #45B9A8;
+  display: inline-block;
+}
+
+  mat-form-field{
+    margin-bottom: 10px;
+  }
+  
+  .gst-container {
+    display: flex;
+    gap: 10px; 
+    width: 100%;
+  }
+  
+  .gst-input {
+    flex: 0 1 60%;
+  }
+
+  .select-details-input {
+    flex: 0 1 50%;
+  }
+
+  .contact-details-container {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+  }
+
+  .contact-details-input {
+    flex: 0 1 50%;
+  }
+  
+  .validate-btn {
+    width: 120px;
+    height: 40px; 
+    margin-top: 5px;
+    white-space: nowrap;
+    border-radius: 20px;
+    background-color: #f1f1f1;
+    color: #45B9A8;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .submit-btn {
+    height: 50px;
+    width: 220px;
+    border-radius: 25px;
+    font-size: 15px;
+    background-color: #f1f1f1;
+    color: #45B9A8;
+  }

@@ -1,0 +1,27 @@
+<div>
+    <div>
+        <span style="font-weight: 400; letter-spacing: 0.2px;">Attachments</span>
+    </div>
+
+    <div class="attachments-container">
+        <div class="preview-container">
+            <div class="preview-box" *ngFor="let file of files; let i = index">
+                <ng-container *ngIf="file.file.type.startsWith('image/'); else fileNameTemplate">
+                    <img [src]="file.url" alt="{{ file.file.name }}">
+                </ng-container>
+                <ng-template #fileNameTemplate>
+                    <p class="file-name">{{ file.file.name }}</p>
+                </ng-template>
+
+                <button mat-icon-button color="warn" (click)="removeFile(i)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <label class="file-upload">
+            <input type="file" (change)="onFileSelected($event)" multiple accept="image/*,.pdf,.doc,.docx" hidden>
+            <mat-icon>add</mat-icon>
+        </label>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="playback-dialog-root">
+    <h2 style="text-align: center; margin-top: 0; margin-bottom: 30px;">Playback</h2>
+    <div style="display: flex;">
+        <!-- <mat-form-field appearance="outline" style="flex: 1;">
+            <mat-label>Tracker Name</mat-label>
+            <input 
+                    type="text"
+                   placeholder="Ex ELB0001"
+                   aria-label="Tracker name"
+                   matInput
+                   [formControl]="myControl"
+                   [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+              @for (option of filteredOptions | async; track option) {
+                <mat-option [value]="option">{{option}}</mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field> -->
+          <mat-form-field appearance="outline" style="flex: 1;">
+            <mat-label>Tracker Name</mat-label>
+            <input 
+                    type="text"
+                   placeholder="Ex ELB0001"
+                   aria-label="Tracker name"
+                   matInput
+                   [disabled]="true"
+                   [value]="trackerName"
+                   >
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="search-box" appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input [autofocus]="true" matInput (focus)="true" [matDatepicker]="startTimePicker" (dateInput)="dateInput('start-time', $event)">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="startTimePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startTimePicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field style="margin-left: 20px;" class="search-box" appearance="outline">
+            <mat-label>Start Time</mat-label>
+            <input matInput  type="time" placeholder="Ex: 12:00 AM" [(ngModel)]="startTime">
+            <mat-hint>HH:MM AA</mat-hint>
+        </mat-form-field>
+    </div>
+    <div style="margin-top: 10px;">
+        <mat-form-field class="search-box" appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="endTimePicker" (dateInput)="dateInput('end-time', $event)">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="endTimePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endTimePicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field style="margin-left: 20px;" class="search-box" appearance="outline">
+            <mat-label>End Time</mat-label>
+            <input matInput type="time" placeholder="Ex: 12:00 PM" [(ngModel)]="endTime">
+            <mat-hint>HH:MM AA</mat-hint>
+        </mat-form-field>
+    </div>
+    <div style="display: flex;">
+        <button mat-flat-button style="flex: 1; margin-top: 20px;" color="primary" (click)="fetchPlaybackDetails()">Start Playback</button>
+    </div>
+</div>

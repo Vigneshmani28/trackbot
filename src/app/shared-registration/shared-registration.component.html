@@ -1,0 +1,130 @@
+<div class="form-container">
+    <h1 class="header-text">
+      {{title}}
+    </h1>
+    
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit.emit()">
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{capitalizeFirstLetter(entityName)}} Name</mat-label>
+        <input matInput [formControlName]="entityName + 'Name'">
+        <mat-error *ngIf="registrationForm.get(entityName + 'Name')?.invalid && registrationForm.get(entityName + 'Name')?.touched">
+            {{capitalizeFirstLetter(entityName)}} Name is required and must be at least 3 characters.
+        </mat-error>
+      </mat-form-field>
+  
+      
+      <div class="gst-container">
+        <mat-form-field appearance="outline" class="select-details-input">
+          <mat-label>Select {{capitalizeFirstLetter(entityName)}} Type</mat-label>
+          <mat-select [formControlName]="entityName + 'Type'">
+            <mat-option *ngFor="let type of entityTypes" [value]="type">
+              {{ type }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="registrationForm.get(entityName + 'Type')?.touched && registrationForm.get(entityName + 'Type')?.invalid">
+            {{capitalizeFirstLetter(entityName)}} Type is required.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="gst-input">
+          <mat-label>GST Number</mat-label>
+          <input matInput formControlName="gstNumber" autocomplete="off">
+          
+          <mat-error *ngIf="registrationForm.get('gstNumber')?.invalid && registrationForm.get('gstNumber')?.touched">
+            GST Number is required or invalid
+          </mat-error>
+          
+          <mat-hint *ngIf="gstVerifyFlag">{{ gstVerifyName }}</mat-hint>
+        </mat-form-field>
+        
+  
+        <div class="button-container">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="button" 
+            class="validate-btn"
+            [disabled]="gstLoading || isEditMode"
+            (click)="onGstValidate.emit()"
+          >
+            <span *ngIf="!gstLoading">Validate</span>
+            <span *ngIf="gstLoading" class="loader"></span>
+          </button>
+        </div>
+      </div>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Director Name</mat-label>
+        <input matInput formControlName="directorName">
+        <mat-error *ngIf="registrationForm.get('directorName')?.invalid && registrationForm.get('directorName')?.touched">
+            Director Name is required.
+        </mat-error>
+      </mat-form-field>
+  
+      <div class="contact-details-container">
+        <mat-form-field appearance="outline" class="contact-details-input">
+            <mat-label>Contact Person Name</mat-label>
+            <input matInput formControlName="contactPersonName">
+            <mat-error *ngIf="registrationForm.get('contactPersonName')?.invalid && registrationForm.get('contactPersonName')?.touched">
+                Contact Person Name is required.
+            </mat-error>
+          </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="contact-details-input">
+            <mat-label>Contact Person Number</mat-label>
+            <input matInput formControlName="contactPersonNumber">
+            <mat-error *ngIf="registrationForm.get('contactPersonNumber')?.invalid && registrationForm.get('contactPersonNumber')?.touched">
+                Contact Person Number is required and must be 10 digits.
+            </mat-error>
+          </mat-form-field>
+      </div>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contact Email</mat-label>
+        <input matInput formControlName="contactEmail">
+        <mat-error *ngIf="registrationForm.get('contactEmail')?.invalid && registrationForm.get('contactEmail')?.touched">
+            Email is required or invalid.
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Login Email Id</mat-label>
+        <input matInput formControlName="loginEmailId">
+        <mat-error *ngIf="registrationForm.get('loginEmailId')?.invalid && registrationForm.get('loginEmailId')?.touched">
+            Email is required or invalid.
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Address</mat-label>
+        <textarea matInput formControlName="address" rows="3"></textarea>
+        <mat-error *ngIf="registrationForm.get('address')?.invalid && registrationForm.get('address')?.touched">
+            Address is required.
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3"  formControlName="description"></textarea>
+      </mat-form-field>
+  
+      <app-attachments></app-attachments>
+  
+      <br />
+  
+      
+      <div class="button-container">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          class="submit-btn"
+          [disabled]="loading"
+        >
+        <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Submit' }}</span>
+          <span *ngIf="loading" class="loader"></span>
+        </button>
+      </div>
+    </form>
+  </div>

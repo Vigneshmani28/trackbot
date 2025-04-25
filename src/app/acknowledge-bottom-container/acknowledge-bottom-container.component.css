@@ -1,0 +1,247 @@
+.bottom-sheet-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 98vw;
+    max-width: 100%;
+    min-height: 245px;
+    background-color: #16284A;
+    color: white;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 10px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.top-container {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    padding: 5px 10px;
+    width: 96%;
+    position: relative;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.top-container h3 {
+    margin: 0;
+    font-size: clamp(16px, 4vw, 20px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    flex-shrink: 0;
+}
+
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-grow: 1;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.close-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.measure-check-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.acknowledge-btn {
+    background-color: transparent !important;
+    color: #14B6A6 !important;
+    border-color: #14B6A6 !important;
+    font-weight: bold !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+::ng-deep .measure-check .mdc-checkbox__background {
+    border-color: white !important;
+}
+
+.bottom-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 5px;
+    flex-wrap: wrap;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.left-icon, .right-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 50%;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    font-size: 24px; 
+}
+
+
+
+.section {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 100%;
+    max-width: 300px;
+    min-width: 200px;
+    padding: 5px;
+    font-size: clamp(12px, 3vw, 15px);
+    box-sizing: border-box;
+}
+
+.location-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.location-grid .full-width {
+    grid-column: span 2;
+}
+
+.section h4 {
+    font-size: clamp(12px, 3vw, 14px);
+    margin-bottom: 3px;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.section p {
+    margin: 3px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+    .top-container {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .top-right {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        width: calc(100% - 30px);
+    }
+    
+    .close-icon {
+        top: auto;
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .measure-check-container {
+        order: 1;
+    }
+    
+    .acknowledge-btn {
+        order: 2;
+    }
+    
+    .bottom-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .section {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-container h3 {
+        font-size: 16px;
+        width: 100%;
+    }
+
+    .bottom-sheet-container {
+        max-height: 100px;
+    }
+    
+    .location-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .location-grid .full-width {
+        grid-column: span 1;
+    }
+    
+    .top-right {
+        width: 100%;
+    }
+}
+
+.dialog-container {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .dialog-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: bold;
+  }
+  
+  .acknowledge-icon {
+    font-size: 24px;
+  }
+  
+  .dialog-content {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .dialog-actions {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+  }
+  
+  .cancel-btn {
+    color: #757575;
+  }
+  
+  .acknowledge-btn {
+    background-color: #1c64b7;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 15px;
+  }
+  
+  .acknowledge-btn:hover {
+    background-color: #0060B9;
+    color: white;
+  }

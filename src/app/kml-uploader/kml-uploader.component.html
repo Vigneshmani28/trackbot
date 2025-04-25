@@ -1,0 +1,90 @@
+<mat-card class="uploader-card">
+  <mat-card-header>
+    <mat-card-title class="card-title">
+      <mat-icon class="title-icon">map</mat-icon>
+      KML File Upload
+    </mat-card-title>
+    <mat-card-subtitle>Upload geographic data for visualization</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="file-upload-container">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button mat-raised-button color="primary" class="upload-button">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Choose KML Files</span>
+          <input #fileInput type="file" accept=".kml" (change)="onFileChange($event)" class="file-input" multiple>
+        </button>
+        
+        <button  *ngIf="selectedFiles.length > 0" mat-icon-button color="warn" (click)="clearAllSelectedFiles()"  matTooltip="Clear all selected files">
+          <mat-icon>highlight_off</mat-icon>
+        </button>
+      </div>
+      
+
+      <div *ngIf="selectedFiles.length === 0" class="no-file-alert">
+        <mat-icon>report_problem</mat-icon>
+        <span>No file selected</span>
+      </div>
+
+      <div *ngIf="selectedFiles.length > 0" class="file-list">
+        <div *ngFor="let fileWithColor of selectedFiles; let i = index" class="file-list-item">
+          <mat-icon class="file-icon">description</mat-icon>
+          <span class="file-name">{{ fileWithColor.file.name }}</span>
+
+          <!-- Per-file color picker -->
+          <div class="color-box" [ngStyle]="{ 'background-color': selectedFiles[i].color }">
+            <input 
+              type="color" 
+              [(ngModel)]="selectedFiles[i].color" 
+              (change)="updateFileColor(i, selectedFiles[i].color)" 
+              class="color-input" 
+            />
+          </div>
+          <button mat-icon-button color="warn" (click)="clearSelectedItemRemove(i)" matTooltip="Remove this file">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+     <!-- Submit Button -->
+    <!-- <button mat-raised-button color="primary" class="submit-button" (click)="onSubmit()" [disabled]="selectedFiles.length === 0 || loading">
+      <ng-container *ngIf="!loading; else loadingTemplate">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <mat-icon>send</mat-icon>
+          Visualize Data
+        </div>
+      </ng-container>
+      <ng-template #loadingTemplate>
+        <mat-progress-spinner diameter="20" mode="indeterminate" color="primary" strokeWidth="3"></mat-progress-spinner>
+      </ng-template>
+    </button> -->
+  </mat-card-content>
+</mat-card>
+
+<ng-container *ngIf="confirmDialogVisible">
+  <div class="overlay">
+    <mat-card class="confirm-dialog">
+      <mat-card-title>Remove Files?</mat-card-title>
+      <mat-card-content>Are you sure you want to remove the selected files?</mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button (click)="confirmAllClearFiles(false)">Cancel</button>
+        <button mat-raised-button color="warn" (click)="confirmAllClearFiles(true)">Remove</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="confirmRemoveOneItemDialog">
+  <div class="overlay">
+    <mat-card class="confirm-dialog">
+      <mat-card-title>Remove this File?</mat-card-title>
+      <mat-card-content>Are you sure you want to remove the selected file?</mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button (click)="confirmClearItem(false)">Cancel</button>
+        <button mat-raised-button color="warn" (click)="confirmClearItem(true)">Remove</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</ng-container>

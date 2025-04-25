@@ -1,0 +1,121 @@
+<div class="tracker-details-root">
+
+    <div class="tracker-details-header-root">
+        <div class="tracker-header-content">
+            <span class="tracker-header-text">{{mockTracker.deviceName}} - {{ tracker.deviceName }}</span>
+        </div>
+        
+        <div class="battery-container">
+            <mat-icon class="battery-icon">battery_charging_full</mat-icon>
+            <span class="battery-percentage">100%</span>
+        </div>
+    
+        <mat-icon class="tracker-header-icon" fontIcon="close" (click)="close($event)"></mat-icon>
+    </div>
+    
+    
+
+    <div class="tracker-details-child-row">
+        <mat-icon aria-hidden="false" fontIcon="info_outline"></mat-icon>
+        <div class="tracker-details-content">
+            <div class="tracker-details-row-header">Device Description</div>
+            <div class="tracker-details-row-content">
+            <span class="tracker-details-span-text">Device ID: {{tracker.status}}</span>
+            <span class="tracker-details-span-text">Device Model: {{tracker.status}}</span>
+            <span class="tracker-details-span-text">Troop Group: {{'N/A'}}</span>
+            <span class="tracker-details-span-text">Report Interval(mins): {{'00:01:00'}}</span>
+            </div>
+        </div>
+    </div>
+    
+
+    <mat-divider />
+
+    <div class="tracker-details-child-row">
+        <mat-icon aria-hidden="false" fontIcon="info_outline"></mat-icon>
+        <div class="tracker-details-content">
+            <div class="tracker-details-row-header">Credit/Position Limit</div>
+            <div class="tracker-details-row-content">
+            <span class="tracker-details-span-text">Credit Limit: {{'N/A'}}</span>
+            <span class="tracker-details-span-text">Consumed Position: {{'200'}}</span>
+            <span class="tracker-details-span-text">Remaining Position: {{'100'}}</span>
+            <span class="tracker-details-span-text">Position Limit: {{'300'}}</span>
+            </div>
+        </div>
+    </div>
+
+    <mat-divider />
+
+    <div class="tracker-details-child-row">
+        <mat-icon aria-hidden="false" fontIcon="location_on_outlined"></mat-icon>
+        <div class="tracker-details-content">
+            <div class="tracker-details-row-header">Location</div>
+        <div class="tracker-details-row-content">
+            <span class="tracker-details-span-text">Lat: 15.2545</span>
+            <span class="tracker-details-span-text">Long: 80.32554</span>
+            <span class="tracker-details-span-text">Speed(knots): 15.25</span>
+            <span class="tracker-details-span-text">Altitude(ft): 80.524</span>
+            <span class="tracker-details-span-text" style="margin-bottom: 8px;">Heading: 15</span>
+        </div>
+        </div>
+    </div>
+
+    <mat-divider />
+
+    <div class="tracker-details-child-row">
+        <mat-icon aria-hidden="false" fontIcon="schedule_outlined"></mat-icon>
+        <div class="tracker-details-content">
+            <div class="tracker-details-row-header">GPS Fix Time</div>
+            <span class="tracker-details-span-text">UTC: Feb18, Tue 11:39:78</span>
+            <span class="tracker-details-span-text">IST: Feb18, Tue 17:09:78</span>
+        </div>
+    </div>
+
+    <mat-divider />
+
+    <div class="tracker-details-child-row">
+        <mat-icon aria-hidden="false" fontIcon="history_outlined"></mat-icon>
+        <div class="tracker-details-content">
+            <div class="tracker-details-row-header">Last Updated Time</div>
+            <span class="tracker-details-span-text">UTC: Feb18, Tue 11:39:78</span>
+            <span class="tracker-details-span-text">IST: Feb18, Tue 17:09:78</span>
+        </div>
+    </div>
+
+    <mat-divider />
+
+    <div class="tracker-details-child-row">
+        <mat-icon aria-hidden="false" fontIcon="gps_fixed_outlined"></mat-icon>
+        <div class="tracker-details-content">
+            <div class="tracker-details-row-header">Status</div>
+            <span class="tracker-details-span-text">{{tracker.status}}</span>
+        </div>
+    </div>
+
+    <mat-divider />
+
+    <div class="tracker-details-container">
+        <div class="tracker-details-row1">
+            <div class="tracker-details-cell" (click)="openView('chat')">
+                <mat-icon aria-hidden="false" fontIcon="email"></mat-icon>
+                <span class="tracker-details-span-text1">ChatBox</span>
+            </div>
+            <div class="tracker-details-cell"  (click)="playbackClick()" [ngClass]="{'disabled': isDisabled}">
+                <mat-icon aria-hidden="false" fontIcon="play_circle_outline"></mat-icon>
+                <span class="tracker-details-span-text1">Playback</span>
+            </div>
+        </div>
+        <div class="tracker-details-row1" (click)="openView('settings')">
+            <div class="tracker-details-cell">
+                <mat-icon aria-hidden="false" fontIcon="settings_outlined"></mat-icon>
+                <span class="tracker-details-span-text1">Setting</span>
+            </div>
+            <div class="tracker-details-cell"  (click)="openView('reports')">
+                <mat-icon aria-hidden="false" fontIcon="description"></mat-icon>
+                <span class="tracker-details-span-text1">Reports</span>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>

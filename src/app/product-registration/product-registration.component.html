@@ -1,0 +1,84 @@
+<div class="form-container">
+    <h1 class="header-text">
+        {{isViewMode ? 'View Product' : isEditMode ? 'Update Dataformat' : 'Register Product'}}
+    </h1>
+    
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Product Name</mat-label>
+        <input matInput formControlName="productName" placeholder="Give a name for the Product" [readonly]="isViewMode">
+        <mat-error *ngIf="productForm.get('productName')?.invalid && productForm.get('productName')?.touched">
+          Productt Name is required
+        </mat-error>
+      </mat-form-field>
+  
+      <div class="contact-details-container">
+        <mat-form-field appearance="outline" class="contact-details-input">
+          <mat-label>Product Model Number</mat-label>
+          <input matInput formControlName="productModelNumber" [readonly]="isViewMode">
+          <mat-error *ngIf="productForm.get('productModelNumber')?.invalid && productForm.get('productModelNumber')?.touched">
+            Model Number is required.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="contact-details-input">
+          <mat-label>Product Version</mat-label>
+          <input matInput formControlName="productVersion" [readonly]="isViewMode">
+          <mat-error *ngIf="productForm.get('productVersion')?.invalid && productForm.get('productVersion')?.touched">
+            Product Version is required.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="contact-details-container">
+        <mat-form-field appearance="outline" class="select-details-input">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category">
+            <mat-option *ngFor="let category of categoryOptions" [value]="category">
+              {{ category }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="productForm.get('category')?.touched && productForm.get('category')?.invalid">
+            Category is required.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="select-details-input">
+            <mat-label>Dataformat</mat-label>
+            <mat-select formControlName="dataFormat" multiple>
+              <mat-option *ngFor="let dataFormat of dataFormatsOptions" [value]="dataFormat">
+                {{ dataFormat }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="productForm.get('dataFormat')?.touched && productForm.get('dataFormat')?.invalid">
+              At least one DataFormat is required.
+            </mat-error>
+          </mat-form-field>
+          
+      </div>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Manufacturer / Prototype</mat-label>
+        <textarea matInput rows="3" formControlName="manuFacturer" [readonly]="isViewMode"></textarea>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description" [readonly]="isViewMode"></textarea>
+      </mat-form-field>
+  
+      <div class="button-container" *ngIf="!isViewMode">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          class="submit-btn"
+          [disabled]="loading"
+        >
+          <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Submit' }}</span>
+          <span *ngIf="loading" class="loader"></span>
+        </button>
+      </div>
+  
+    </form>
+  </div>
+  

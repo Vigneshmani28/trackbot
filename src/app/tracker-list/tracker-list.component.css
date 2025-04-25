@@ -1,0 +1,118 @@
+.tracker-status-card {
+    min-width: 150px;
+    max-width: 200px;
+    padding-top: 5px;
+    margin-right: 25px;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 12px; 
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); 
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .tracker-status-card:hover {
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.25);
+    transform: translateY(-3px);
+  }
+  
+  
+  .tracker-status-card-title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 5px;
+      margin: auto;
+  }
+  
+  .tracker-status-card-count {
+      font-weight: bolder;
+      font-size: xx-large;
+      margin: auto;
+  }
+  
+  .status-cards {
+      justify-content: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+  }
+  
+  .tracker-status-card.status-total {
+      border-bottom: 4px solid #0060B9;
+  }
+  
+  .tracker-status-card.status-active {
+      border-bottom: 4px solid #209F00;
+  }
+  
+  .tracker-status-card.status-in-active {
+      border-bottom: 4px solid #888888;
+  }
+  
+  .tracker-status-card.status-sleep {
+      border-bottom: 4px solid #EAC500;
+  }
+  
+  .tracker-status-card.status-alert {
+      border-bottom: 4px solid #ED0000;
+  }
+
+.addTrackerBtn {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 10px;
+}
+
+.centered-card {
+    margin: -10px auto;
+    max-width: 1000px; 
+    padding: 16px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.centered-fields {
+    margin: 0 auto;
+    max-width: 1000px;
+    padding: 16px;
+    display: flex;
+    gap: 20px;
+    justify-content: start; 
+    align-items: center;
+}
+
+table {
+    border-spacing: 0 10px; 
+  }
+
+th {
+    font-weight: bold;
+}
+
+.mat-row,
+.mat-header-row {
+  padding: 16px 0;
+}
+
+.mat-row {
+  margin-bottom: 10px;
+  height: 50px;
+}
+
+mat-form-field.small {
+    --mat-form-field-container-height: 40px;
+    --mat-form-field-container-vertical-padding: 8px;
+    width: 250px;
+  }
+  
+  @media (max-width: 768px) {
+    .sidenav {
+      width: 50%;
+    }
+  }
+
+  

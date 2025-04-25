@@ -1,0 +1,280 @@
+<ng-container *ngIf="!isLoginPage(); else loginTemplate">
+<div class="container">
+  <mat-toolbar class="toolbar">
+    <!-- Left Section -->
+    <div class="toolbar-left" (click)="logoClickToHome()">
+      <span class="main-logo">TRACKBOT</span>
+    </div>
+  
+    <!-- Right Section -->
+    <div class="toolbar-right">
+      <div class="tracker-list-container">
+        <form class="search-form">
+          <mat-form-field class="small-input" appearance="outline" *ngIf="screenName !== 'MapView'">
+            <mat-label style="font-size: 14px">Enter Tracker ID / Name</mat-label>
+            <input
+              #input
+              type="text"
+              placeholder="Enter Tracker ID / Name"
+              matInput
+              [formControl]="myControl"
+              [matAutocomplete]="auto"
+              (input)="filter()"
+              (focus)="filter()"
+              class="small-input-field"
+            />
+            <mat-icon
+              matSuffix
+              *ngIf="myControl.value"
+              (click)="clearInput()"
+              class="clear-icon"
+            >
+              close
+            </mat-icon>
+            <mat-autocomplete requireSelection #auto="matAutocomplete">
+              @for (option of filteredOptions; track option) {
+              <mat-option [value]="option.id" style="font-size: 14px">
+                {{ option.id + ' | ' + option.id }}
+              </mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+        </form>
+      </div>
+
+      <button
+      mat-button
+      class="switch-view-button"
+      color="primary"
+      (click)="switchView()"
+      style="min-width: 100px;"
+    >
+      {{ screenName }}
+    </button>
+  
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <mat-icon *ngIf="screenName !== 'MapView'" (click)="toggleScreen()" [matTooltip]="'Messages'" style="cursor: pointer;">
+          chat_bubble_outline
+        </mat-icon>
+        <mat-icon *ngIf="screenName !== 'MapView'" [matTooltip]="'Broadcast'" style="cursor: pointer;" (click)="openBroadCastDialog(broadCastDialog)">
+          cell_tower
+        </mat-icon>
+        <mat-icon *ngIf="screenName !== 'MapView'" [matTooltip]="'Notifications'" style="cursor: pointer;">
+          notifications_none
+        </mat-icon>
+  
+        <!-- Account Icon with Menu -->
+        <mat-menu #accountMenu="matMenu" class="profile-menu">
+          <button mat-menu-item>
+            <mat-icon style="color: white;">person</mat-icon>
+            Welcome {{ username }}!
+          </button>
+          <button mat-menu-item (click)="toggleGeoFenceView()">
+            <mat-icon style="color: white;">location_on</mat-icon>
+              {{showGeoFence ? 'Hide Geofence' : 'Geofence'}}
+          </button>
+          <button mat-menu-item (click)="openGroupDialog()">
+            <mat-icon style="color: white;">workspaces_filled</mat-icon>
+            Group creation
+          </button>          
+          <button mat-menu-item (click)="toggleShowWeather()">
+            <mat-icon style="color: white;">cloud</mat-icon>
+            {{showWeatherOption ? 'Hide Weather' : 'Weather'}}
+          </button>          
+          <button mat-menu-item>
+            <mat-icon style="color: white;">next_plan</mat-icon>
+            Flight plan
+          </button>
+          <button mat-menu-item (click)="toggleUploadKml()">
+            <mat-icon style="color: white;">file_upload</mat-icon>
+           {{showUploadKML ? 'Hide upload' : 'Upload KML'}}
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item class="logout" (click)="logout()">
+            <mat-icon style="color: red !important;">logout</mat-icon>
+            Logout
+          </button>
+          <mat-divider></mat-divider>         
+        </mat-menu>
+  
+        <mat-icon [matMenuTriggerFor]="accountMenu" class="account-icon">
+          settings
+        </mat-icon>
+      </div>
+    </div>
+  </mat-toolbar>
+  
+
+  @if (isInMapView) {
+  <div class="map-container">
+    <app-live-map-tracking
+      [showMessageBox] = "showMessageBox"
+      [showGeoFenceView] = "showGeoFenceView"
+      [switchScreen]="switchScreen"
+      [trackerName]="myControl.value"
+      [onSwitchView]="switchView"  
+      [showKMLFileUploader] = "showKMLFileUploader"
+      [showWeather] = "showWeather"
+    ></app-live-map-tracking>
+  </div>
+  } @else {
+  <app-trackers-table></app-trackers-table>
+  }
+</div>
+</ng-container>
+
+<ng-template #loginTemplate>
+  <router-outlet></router-outlet>
+</ng-template>
+
+<!-- Broadcast Dialog -->
+<ng-template #broadCastDialog>
+  <div class="broadcast-container">
+    <h2 mat-dialog-title style="text-align: center;">Broadcast</h2>
+    <div mat-dialog-content>
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>Search Tracker / Group</mat-label>
+        <mat-select [(ngModel)]="selectedType" (selectionChange)="onTypeChange()">
+          <mat-option value="trackers">Trackers</mat-option>
+          <mat-option value="group">Group</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Multi-Select for Trackers or Group -->
+      <mat-form-field appearance="outline" style="width: 100%;" *ngIf="selectedType === 'trackers'">
+        <mat-label>Search Tracker</mat-label>
+        <mat-select [(ngModel)]="selectedTrackers" multiple>
+          <mat-option *ngFor="let option of sortedTrackersOption" [value]="option.deviceName">
+            {{ option.deviceName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>            
+
+      <mat-form-field appearance="outline" style="width: 100%;" *ngIf="selectedType === 'group'">
+        <mat-label>Search Group</mat-label>
+        <mat-select [(ngModel)]="selectedGroups" multiple>
+          <mat-option *ngFor="let option of sortedGroupsOption" [value]="option.deviceName">
+            {{ option.deviceName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>      
+
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>Broadcast Message</mat-label>
+        <mat-select [(ngModel)]="selectedBroadCastMessage">
+          <mat-option value="ota">OTA Message</mat-option>
+          <mat-option value="block">Block Device</mat-option>
+          <mat-option value="unblock">Unblock Device</mat-option>
+          <mat-option value="reset">Reset Device</mat-option>
+          <mat-option value="battery">Battery Info</mat-option>
+          <mat-option value="interval">Device Interval</mat-option>
+          <mat-option value="locationShare">Location Sharing</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="width: 100%; margin-top: 10px;" *ngIf="selectedBroadCastMessage === 'ota'">
+        <mat-label>Enter OTA Message</mat-label>
+        <textarea matInput rows="3" placeholder="Type your OTA message..." [(ngModel)]="otaMessage"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="width: 100%; margin-top: 10px;" *ngIf="selectedBroadCastMessage === 'locationShare'">
+        <mat-label>Location Sharing</mat-label>
+        <mat-select [(ngModel)]="selectedLocationSharing">
+          <mat-option value="enable">Enable</mat-option>
+          <mat-option value="disable">Disable</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" style="width: 100%; margin-top: 10px;" *ngIf="selectedBroadCastMessage === 'interval'">
+        <mat-label>Device Interval</mat-label>
+        <div style="display: flex;">
+          <input matInput [(ngModel)]="selectedInterval" 
+                 [ngModelOptions]="{standalone: true}" 
+                 placeholder="HH:mm:ss" 
+                 (input)="formatTime()" 
+                 maxlength="8" />
+        </div>
+      </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button class="cancel-button" (click)="closeDialog()">Cancel</button>
+      <button mat-button class="submit-button" (click)="broadCastSubmit()">Submit</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Block Device Confirmation Dialog -->
+<ng-template #blockDeviceDialog>
+  <div style="padding: 10px;">
+    <h2 mat-dialog-title>Block Device</h2>
+    <div mat-dialog-content>
+      <p>Are you sure you want to block this device?</p>
+      <p class="warning-text">Blocking will prevent the device from sending updates.</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="warn" (click)="closeDialog(true)">Block</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Unblock Device Confirmation Dialog -->
+<ng-template #unblockDeviceDialog>
+  <div style="padding: 10px;">
+    <h2 mat-dialog-title>Unblock Device</h2>
+    <div mat-dialog-content>
+      <p>Are you sure you want to unblock this device?</p>
+      <p class="info-text">The device will resume sending updates.</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="closeDialog(true)">Unblock</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Location Sharing Confirmation Dialog -->
+<ng-template #locationSharingDialog>
+  <div style="padding: 10px;">
+    <h2 mat-dialog-title>Location Sharing</h2>
+    <div mat-dialog-content>
+      <p>Are you sure you want to share your location to this device?</p>
+      <p class="info-text">The device will sharing device locations.</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="closeDialog(true)">Share</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Location Sharing Confirmation Dialog -->
+<ng-template #resetDeviceDialog>
+  <div style="padding: 10px;">
+    <h2 mat-dialog-title>Reset Device</h2>
+    <div mat-dialog-content>
+      <p>Are you sure you want to reset your device?</p>
+      <p class="info-text">The will errasing all your data from that device.</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="closeDialog(true)">Reset</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Location Sharing Confirmation Dialog -->
+<ng-template #batteryInfoDialog>
+  <div style="padding: 10px;">
+    <h2 mat-dialog-title>Request Battery Info</h2>
+    <div mat-dialog-content>
+      <p>Are you sure you want to request battery info from your device?</p>
+      <p class="info-text">The device will request and getting battery information from your device.</p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="closeDialog()">Cancel</button>
+      <button mat-button color="primary" (click)="closeDialog(true)">Request</button>
+    </div>
+  </div>
+</ng-template>

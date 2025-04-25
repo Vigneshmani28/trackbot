@@ -1,0 +1,143 @@
+<div class="form-container">
+  <h1 class="header-text">
+    {{ isEditMode ? "Update Tracker" : "Add Tracker" }}
+  </h1>
+
+  <form *ngIf="trackerForm" [formGroup]="trackerForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Product</mat-label>
+      <mat-select formControlName="productsType">
+        <mat-option *ngFor="let type of productsType" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="
+          trackerForm.get('productsType')?.touched &&
+          trackerForm.get('productsType')?.invalid
+        "
+      >
+        Product Type is required.
+      </mat-error>
+    </mat-form-field>
+
+    <div class="contact-details-container">
+      <mat-form-field appearance="outline" class="select-details-input">
+        <mat-label>Data Format</mat-label>
+        <mat-select formControlName="dataFormat">
+          <mat-option *ngFor="let type of dataFormat" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="
+            trackerForm.get('dataFormat')?.touched &&
+            trackerForm.get('dataFormat')?.invalid
+          "
+        >
+          Product Type is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="select-details-input">
+        <mat-label>Serial Number</mat-label>
+        <input matInput formControlName="serialNumber" />
+        <mat-error
+          *ngIf="
+            trackerForm.get('serialNumber')?.invalid &&
+            trackerForm.get('serialNumber')?.touched
+          "
+        >
+          SerialNumber is required.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="checkbox-container">
+        <mat-checkbox formControlName="sameAsTrackerId" (change)="onSameAsTrackerIdChange($event.checked)">
+            Same as Tracker Id
+          </mat-checkbox>
+      </div>
+
+    <div class="contact-details-container">
+      <mat-form-field appearance="outline" class="contact-details-input">
+        <mat-label>Tracker Id</mat-label>
+        <input matInput formControlName="trackerId" />
+        <mat-error
+          *ngIf="
+            trackerForm.get('trackerId')?.invalid &&
+            trackerForm.get('trackerId')?.touched
+          "
+        >
+          Tracker Id is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="contact-details-input">
+        <mat-label>Tracker Name</mat-label>
+        <input matInput formControlName="trackerName" />
+        <mat-error
+          *ngIf="
+            trackerForm.get('trackerName')?.invalid &&
+            trackerForm.get('trackerName')?.touched
+          "
+        >
+          Tracker Name is required.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Customer</mat-label>
+      <mat-select formControlName="customerType">
+        <mat-option *ngFor="let type of customerType" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="
+          trackerForm.get('customerType')?.touched &&
+          trackerForm.get('customerType')?.invalid
+        "
+      >
+        Customer Type is required.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>User</mat-label>
+      <mat-select formControlName="userType">
+        <mat-option *ngFor="let type of userType" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="
+          trackerForm.get('userType')?.touched &&
+          trackerForm.get('userType')?.invalid
+        "
+      >
+        User Type is required.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput rows="3" formControlName="description"> </textarea>
+    </mat-form-field>
+
+    <div class="button-container">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        class="submit-btn"
+        [disabled]="loading"
+        (click)="onSubmit()"
+      >
+        <span *ngIf="!loading">{{ isEditMode ? "Update" : "Submit" }}</span>
+        <span *ngIf="loading" class="loader"></span>
+      </button>
+    </div>
+  </form>
+</div>

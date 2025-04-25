@@ -1,0 +1,89 @@
+<div class="bottom-sheet-container">
+  <div class="top-container">
+    <div class="header-section">
+      <h3>Playback</h3>
+    </div>
+    
+    <div class="device-info">
+      <span>Device ID: ELBH22</span>
+      <span>Device Model: Something</span>
+    </div>
+    
+    <div class="time-info">
+      <div class="time-group">
+        <p class="time-label">GPS Time:</p>
+        <div class="time-values">
+          <div class="time-value">
+            <span class="time-zone">UTC</span>
+            <span class="time">2024-03-14 12:00:00</span>
+          </div>
+          <div class="time-value">
+            <span class="time-zone">IST</span>
+            <span class="time">2024-03-14 12:00:00</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="time-group">
+        <p class="time-label">Server Time:</p>
+        <div class="time-values">
+          <div class="time-value">
+            <span class="time-zone">UTC</span>
+            <span class="time">2024-03-14 12:00:00</span>
+          </div>
+          <div class="time-value">
+            <span class="time-zone">IST</span>
+            <span class="time">2024-03-14 12:00:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="middle-container">
+    <div class="controls-wrapper">
+      <div class="playback-controls" *ngIf="isVideoMode">
+        <button mat-icon-button class="control-btn" (click)="reversePlayback()" aria-label="Rewind">
+          <mat-icon class="large-icon">skip_previous</mat-icon>
+        </button>
+        <button mat-icon-button class="play-pause-btn" (click)="togglePlayPause()" aria-label="Play/Pause">
+          <mat-icon class="large-icon">{{ isPlaying ? "pause" : "play_arrow" }}</mat-icon>
+        </button>
+        <button mat-icon-button class="control-btn" (click)="fastForward()" aria-label="Fast Forward">
+          <mat-icon class="large-icon">skip_next</mat-icon>
+        </button>
+      </div>
+
+      <div class="speed-control">
+        <mat-form-field appearance="outline" class="no-border-select" *ngIf="isVideoMode">
+          <mat-select [(ngModel)]="selectedSpeed" (selectionChange)="onSpeedChange($event)">
+            <mat-option *ngFor="let speed of playbackSpeeds" [value]="speed">
+              {{ speed }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="additional-controls">
+        <mat-checkbox class="move-map" [(ngModel)]="moveMap" (change)="updateMoveMap()">
+          Move Map
+        </mat-checkbox>
+
+        <button mat-flat-button color="primary" class="stop-btn" (click)="stopPlayback()">
+          Stop Playback
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bottom-container">
+    <h3>Location</h3>
+    <div class="location-details">
+      <p><strong>Latitude:</strong> 12.3456</p>
+      <p><strong>Longitude:</strong> 77.1234</p>
+      <p><strong>Speed:</strong> 50 km/h</p>
+      <p><strong>Altitude:</strong> 300m</p>
+      <p><strong>Heading:</strong> 270°</p>
+    </div>
+  </div>
+</div>

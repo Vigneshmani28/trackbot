@@ -1,0 +1,122 @@
+.tracker-details-root {
+    background-color: #16284A;
+    color: #fff;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+mat-divider {
+    border-top: 1px solid #14BDAB !important;
+    opacity: 0.5;
+}
+
+.tracker-details-header-root {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    margin-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tracker-header-title {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    flex-grow: 1;
+    color: #14BDAB;
+}
+
+.tracker-header-icon {
+    cursor: pointer;
+    font-size: 24px;
+    color: #14BDAB;
+}
+
+.tracker-name {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.tracker-header-text {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #14BDAB;
+}
+
+/* Settings List */
+.tracker-settings-list {
+    margin-top: 10px;
+}
+
+.tracker-settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.tracker-settings-item:hover {
+    background: rgba(20, 189, 171, 0.2);
+}
+
+.settings-icon {
+    color: #14BDAB;
+    font-size: 24px;
+}
+
+.settings-text {
+    flex-grow: 1;
+    margin-left: 15px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.settings-arrow {
+    color: #14BDAB;
+    font-size: 24px;
+}
+  
+  .selected-time {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .warning-text {
+    color: #f44336;
+    font-weight: 500;
+  }
+  
+  .info-text {
+    color: #2196F3;
+    font-weight: 500;
+  }
+  
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .icon-grid mat-icon {
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  
+  .icon-grid mat-icon:hover {
+    transform: scale(1.2);
+  }
+  
+  .icon-grid mat-icon.selected {
+    color: #3f51b5;
+    transform: scale(1.2);
+  }

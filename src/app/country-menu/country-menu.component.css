@@ -1,0 +1,207 @@
+.map-menu-container {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-card {
+  width: 320px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+.menu-header {
+  padding: 16px 20px;
+  background: #3f51b5;
+  color: white;
+  display: flex;
+  align-items: center;
+  
+  h3 {
+    margin: 0;
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+  
+  &.with-back {
+    padding: 12px 16px;
+  }
+}
+
+.back-button {
+  color: white;
+  margin-right: 12px;
+}
+
+.full-width {
+ padding: 5px;
+}
+
+mat-form-field {
+  .mat-form-field-outline {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+}
+
+mat-selection-list {
+  padding: 8px 0;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.list-item {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+  
+  &:hover {
+    background-color: #f5f5f5 !important;
+  }
+  
+  .mat-list-option {
+    height: 56px;
+  }
+}
+
+.option-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  overflow: hidden; 
+}
+
+.option-icon {
+  flex-shrink: 0; 
+  flex-grow: 0; 
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  color: #3f51b5;
+}
+
+.airport-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+  
+  .airport-name {
+    font-weight: 500;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .airport-code {
+    font-size: 0.8rem;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.airport-message {
+  padding: 12px 16px;
+  background: #fff8e1;
+  color: #ff6d00;
+  display: flex;
+  align-items: center;
+  margin: 0 16px 8px;
+  margin-top: 10px;
+  border-radius: 4px;
+  
+  mat-icon {
+    margin-right: 8px;
+    font-size: 20px;
+  }
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.weather-container {
+  padding: 16px;
+  
+  .weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    
+    .weather-temp {
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: #3f51b5;
+    }
+    
+    .weather-description {
+      font-size: 1rem;
+      color: #333;
+    }
+  }
+  
+  .weather-details {
+    display: flex;
+    gap: 16px;
+    
+    .weather-detail {
+      display: flex;
+      align-items: center;
+      color: #666;
+      
+      mat-icon {
+        margin-right: 4px;
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.no-data {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #666;
+  
+  mat-icon {
+    font-size: 40px;
+    margin-bottom: 8px;
+    color: #9e9e9e;
+  }
+}
+
+@media (max-height: 700px) {
+  mat-selection-list {
+    max-height: 50vh;
+  }
+}
+
+@media (max-width: 600px) {
+  .map-menu-container {
+    right: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    transform: none;
+    top: 20px;
+  }
+  
+  .menu-card {
+    width: 100%;
+  }
+}

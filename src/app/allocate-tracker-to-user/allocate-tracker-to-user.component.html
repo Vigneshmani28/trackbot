@@ -1,0 +1,29 @@
+<div style="margin: 10px;">
+    <mat-card style="padding: 20px 50px;width: fit-content;margin: 0 auto;">
+        <div style="margin-bottom: 30px;">
+            <h2 style="text-align: center;margin-top: 0;">Allocate Tracker</h2>
+        </div>
+        <div style="display: flex;">
+            <div style="width: 20vw;">
+                <div style="font-size: larger; text-align: center;">Trackers</div>
+                <mat-selection-list #trackers [multiple]="true" (selectionChange)="onTrackerListChange($event)">
+                    @for (tracker of trackerNameList; track tracker) {
+                    <mat-list-option [value]="tracker">{{tracker}}</mat-list-option>
+                    }
+                </mat-selection-list>
+            </div>
+            <div style="margin-left: 10vw;width: 20vw;">
+                <div style="font-size: larger; text-align: center;">Users</div>
+                <mat-selection-list #users [multiple]="true" (selectionChange)="onUserListChange($event)">
+                    @for (username of userNameList; track username) {
+                    <mat-list-option [value]="username">{{username}}</mat-list-option>
+                    }
+                </mat-selection-list>
+            </div>
+        </div>
+        <div style="margin-top: 30px;"><span style="font-size: larger;margin-left: 10px;">Selected Trackers: {{trackerNameSelection}}</span></div>
+        <div style="margin-top: 10px;"><span style="font-size: larger;margin-left: 10px;">Selected Users: {{userNameSelection}}</span></div>
+        <button mat-flat-button color="primary"
+            style="margin: 0 auto;padding-left: 50px;padding-right: 50px;margin-top: 30px;">Allocate</button>
+    </mat-card>
+</div>

@@ -1,0 +1,138 @@
+.tracker-details-root {
+    background-color: #16284A;
+    color: #fff;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+mat-divider {
+    border-top: 1px solid #14BDAB !important;
+    opacity: 0.5;
+}
+
+.tracker-details-header-root {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    margin-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tracker-header-title {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    flex-grow: 1;
+    color: #14BDAB;
+}
+
+.tracker-header-icon {
+    cursor: pointer;
+    font-size: 24px;
+    color: #14BDAB
+}
+
+.tracker-name {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.tracker-header-text {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #14BDAB;
+}
+
+.tracker-details-child-row {
+    display: flex;
+    align-items: start;
+    gap: 16px;
+    width: 100%;
+    min-height: 100px;
+    margin-top: 20px;
+}
+
+.tracker-details-child-row mat-icon {
+    color: #14BDAB;
+    align-self: flex-start;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+.tracker-details-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tracker-details-row-header {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+    letter-spacing: 0.2px;
+}
+
+.tracker-details-span-text {
+    font-size: 12px;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+
+.tracker-reports-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tracker-report-item {
+    padding: 10px;
+    min-height: 150px; 
+    width: 90%;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #14BDAB;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.tracker-report-details {
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-height: 300px;
+    overflow: hidden; 
+    border-left: 8px solid #14BDAB;
+}
+
+.tracker-details-span-text {
+    font-size: 12px;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+.all-reports-button-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px;
+  }
+
+.all-reports-button{
+    border-color: var(--text-color);
+    color: var(--text-color);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.all-reports-button:hover {
+    background-color: rgba(20, 189, 171, 0.1);
+    color: var(--text-color);
+}

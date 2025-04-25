@@ -1,0 +1,66 @@
+<div class="bottom-sheet-container">
+    <!-- Top Section: Tracker Name, Checkbox, and Acknowledge Button -->
+    <div class="top-container">
+        <div class="top-right">
+            <h3>1. ELB10001 (Tracker Name)</h3>
+            <div style="display: flex; flex-direction: row; gap:5px; align-items: center; margin-left: 30px;">
+                <mat-checkbox class="measure-check" 
+              [checked]="isMeasureChecked" 
+              (change)="toggleMeasureDistance($event)">
+                </mat-checkbox>
+
+                <span class="tracker-name">Measure Distance</span>
+            </div>
+            <button mat-stroked-button class="acknowledge-btn" (click)="openAcknowledgeDialog(acknowledgeDialog)">Acknowledge</button>
+        </div>
+        <mat-icon class="close-icon" (click)="closeAcknowledgementDialog()">close</mat-icon>
+    </div>
+    
+
+    <!-- Bottom Section: Three Containers (Reduced Spacing) -->
+    <div class="bottom-container">
+    <mat-icon class="left-icon" (click)="previousData()">west</mat-icon>
+
+    <div class="section location-section" [@slideAnimation]="currentIndex">
+        <h3>Location Details</h3>
+        <div class="location-grid">
+            <p><strong>Latitude:</strong> {{ data[currentIndex].latitude }}</p>
+            <p><strong>Longitude:</strong> {{ data[currentIndex].longitude }}</p>
+            <p><strong>Speed:</strong> {{ data[currentIndex].speed }}</p>
+            <p><strong>Altitude:</strong> {{ data[currentIndex].altitude }}</p>
+            <p class="full-width"><strong>Heading:</strong> {{ data[currentIndex].heading }}</p>
+        </div>
+    </div>
+
+    <div class="section" [@slideAnimation]="currentIndex">
+        <h3>Alert Time</h3>
+        <p><strong>UTC:</strong> {{ data[currentIndex].alertUTC }}</p>
+        <p><strong>IST:</strong> {{ data[currentIndex].alertIST }}</p>
+    </div>
+
+    <div class="section" [@slideAnimation]="currentIndex">
+        <h3>Server Time</h3>
+        <p><strong>UTC:</strong> {{ data[currentIndex].serverUTC }}</p>
+        <p><strong>IST:</strong> {{ data[currentIndex].serverIST }}</p>
+    </div>
+
+    <mat-icon class="right-icon" (click)="nextData()">east</mat-icon>
+</div>
+
+    
+</div>
+
+<ng-template #acknowledgeDialog>
+    <div class="dialog-container">
+      <h2 mat-dialog-title class="dialog-title">
+        <mat-icon class="acknowledge-icon">thumb_up_alt</mat-icon> Acknowledge Device
+      </h2>
+      <div mat-dialog-content class="dialog-content">
+        <p>Are you sure you want to acknowledge <strong>fdgdfgdfg</strong>?</p>
+      </div>
+      <div mat-dialog-actions class="dialog-actions">
+        <button mat-button class="cancel-btn" (click)="acknowledgeCloseDialog()">Cancel</button>
+        <button mat-button color="primary" class="acknowledge-btn" (click)="acknowledgeCloseDialog()">Acknowledge</button>
+      </div>
+    </div>
+  </ng-template>

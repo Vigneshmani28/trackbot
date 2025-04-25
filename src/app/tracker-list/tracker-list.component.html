@@ -1,0 +1,101 @@
+<div *ngIf="isAdmin" class="addTrackerBtn">
+    <button  mat-raised-button color="primary" (click)="createTracker()">Add Tracker</button>
+  </div>
+  <div class="status-cards" *ngIf="totalTrackers !== ''">
+    <mat-card class="tracker-status-card status-total">
+      <span class="tracker-status-card-title">Total</span>
+      <span class="tracker-status-card-count">{{ totalTrackers }}</span>
+    </mat-card>
+    <mat-card class="tracker-status-card status-active">
+      <span class="tracker-status-card-title">Active</span>
+      <span class="tracker-status-card-count">{{ activeTrackers }}</span>
+    </mat-card>
+    <mat-card class="tracker-status-card status-in-active">
+      <span class="tracker-status-card-title">Inactive</span>
+      <span class="tracker-status-card-count">{{ inActiveTrackers }}</span>
+    </mat-card>
+    <mat-card class="tracker-status-card status-sleep">
+      <span class="tracker-status-card-title">Sleep</span>
+      <span class="tracker-status-card-count">{{ sleepTrackers }}</span>
+    </mat-card>
+    <mat-card class="tracker-status-card status-alert">
+      <span class="tracker-status-card-title">Alert</span>
+      <span class="tracker-status-card-count">{{ alertTrackers }}</span>
+    </mat-card>
+  </div>      
+  <div class="centered-fields">
+    <mat-form-field class="small" appearance="outline">
+      <mat-label>Tracker Name</mat-label>
+      <input matInput type="text" placeholder="Search Tracker" (keyup)="applyFilter($event, 'deviceName')">
+    </mat-form-field>
+    <mat-form-field class="small" appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select (selectionChange)="onStatusChanged($event)">
+        <mat-option value="">All</mat-option>
+        <mat-option value="Active">Active</mat-option>
+        <mat-option value="InActive">InActive</mat-option>
+        <mat-option value="Sleep">Sleep</mat-option>
+        <mat-option value="Alert">Alert</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="small" appearance="outline">
+      <mat-label>Company Name</mat-label>
+      <input matInput type="text" placeholder="Search Company" (keyup)="applyFilter($event, 'status')">
+
+    </mat-form-field>
+  </div>
+  <mat-card class="centered-card">
+    <table mat-table [dataSource]="dataSource" class="trackers">
+      <!-- <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+        <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+        <td mat-cell *matCellDef="let emp">{{ emp[column] }}</td>
+      </ng-container> -->
+      <ng-container matColumnDef="deviceName">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.deviceName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="latitude">
+        <th mat-header-cell *matHeaderCellDef> Latitude </th>
+        <td mat-cell *matCellDef="let element"> {{element.latitude}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="longitude">
+        <th mat-header-cell *matHeaderCellDef> Longitude </th>
+        <td mat-cell *matCellDef="let element"> {{element.longitude}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="heading">
+        <th mat-header-cell *matHeaderCellDef> Heading </th>
+        <td mat-cell *matCellDef="let element"> {{element.heading}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastUpdatedDeviceTime">
+        <th mat-header-cell *matHeaderCellDef> Last Updated Time </th>
+        <td mat-cell *matCellDef="let element"> {{element.lastUpdatedDeviceTime | date: 'medium'}} </td>
+      </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef aria-label="row actions">Actions</th>
+            <td mat-cell *matCellDef="let element">
+                <button mat-icon-button  [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button (click)="allocateTracker(element)" mat-menu-item>Allocate</button>
+                    <button (click)="deleteTracker(element)" mat-menu-item>Delete</button>
+                  </mat-menu>
+            </td>
+        </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let emprow; columns: displayedColumns"></tr>
+    </table>
+    <mat-paginator [pageSize]="pageSize" [pageSizeOptions]="[2, 5, 10, 20]"></mat-paginator>
+  </mat-card>

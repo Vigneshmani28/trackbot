@@ -1,0 +1,304 @@
+<h1 class="header-text">Trackers</h1>
+<div *ngIf="!selectedTracker && !selectedAllocateTracker">
+<div style="display: flex; gap: 20px">
+  <mat-form-field class="small" appearance="outline">
+    <mat-label>Tracker / Tracker Id</mat-label>
+    <input matInput type="text" (keyup)="applyFilter($event, 'TrackerId')" />
+  </mat-form-field>
+  <mat-form-field class="small" appearance="outline">
+    <mat-label>Name of user / User login id</mat-label>
+    <input
+      matInput
+      type="text"
+      (keyup)="applyFilter($event, 'NameOfTheUser')"
+    />
+  </mat-form-field>
+</div>
+
+<div *ngIf="loading" class="loading-overlay">
+  <div class="loading-content">
+    <mat-progress-spinner
+      mode="indeterminate"
+      diameter="60"
+      color="primary"
+    ></mat-progress-spinner>
+    <p>Loading trackers, please wait...</p>
+  </div>
+</div>
+
+<div *ngIf="!loading">
+  <mat-card class="card">
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource">
+        <ng-container *ngFor="let column of displayedColumns">
+          <ng-container *ngIf="column !== 'Actions'">
+            <ng-container [matColumnDef]="column">
+              <th mat-header-cell *matHeaderCellDef style="font-weight: bold">
+                {{ column }}
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let emp"
+                [ngStyle]="
+                  column === 'LimitReached'
+                    ? { color: emp[column] ? 'red' : 'black' }
+                    : {}
+                "
+              >
+                {{ emp[column] }}
+              </td>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="Actions">
+          <th mat-header-cell *matHeaderCellDef style="font-weight: bold">
+            Actions
+          </th>
+          <td mat-cell *matCellDef="let emp">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="viewTrackerDetails(emp)">View Tracker</button>
+              <button mat-menu-item (click)="allocateTracker(emp)">Allocate / Change User</button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  </mat-card>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[1, 5, 10, 20]"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>
+</div>
+
+<div *ngIf="selectedAllocateTracker">
+  <div class="subscription-container">
+    <div class="details-header-container">
+      <button mat-icon-button (click)="goBack()" class="go-back-button">
+        <mat-icon>arrow_back_ios</mat-icon>
+      </button>
+      <h2 class="details-header">Allocate Tracker</h2>
+    </div>
+
+    <div class="form-container">
+      <form [formGroup]="allocateTrackerForm" class="full-width-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tracker Name</mat-label>
+          <mat-select formControlName="trackerName">
+            <mat-option *ngFor="let tracker of trackersList" [value]="tracker">
+              {{ tracker }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>User</mat-label>
+          <mat-select formControlName="user">
+            <mat-option *ngFor="let user of users" [value]="user">
+              {{ user }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+    </div>
+    
+    <div class="button-container">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        class="submit-btn"
+        (click)="allocateTrackerSubmit()"
+      >
+        Submit
+      </button>
+    </div>
+    
+  </div>
+
+  <div
+  class="sort-container"
+  style="
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-bottom: 10px;
+  "
+>
+  <mat-icon [matMenuTriggerFor]="filterMenu" style="cursor: pointer"
+    >filter_alt</mat-icon
+  >
+</div>
+
+<mat-menu #filterMenu="matMenu" class="custom-menu">
+  <div class="custom-menu-items">
+    <mat-accordion (click)="$event.stopPropagation()">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Tracker ID</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div *ngFor="let trackerId of uniqueTrackerIds">
+          <mat-checkbox
+            (change)="toggleTrackerSelection(trackerId, $event)"
+            [checked]="selectedTrackerIds.includes(trackerId)"
+          >
+            {{trackerId}}
+          </mat-checkbox>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <mat-accordion (click)="$event.stopPropagation()">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Admin ID</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div *ngFor="let adminId of uniqueAdminIds">
+          <mat-checkbox
+            (change)="toggleAdminSelection(adminId, $event)"
+            [checked]="selectedAdminIds.includes(adminId)"
+          >
+            {{adminId}}
+          </mat-checkbox>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <p>Date Range</p>
+    <div class="date-picker-container">
+      <mat-form-field appearance="outline" class="date-picker">
+        <mat-label>From</mat-label>
+        <input
+          matInput
+          [matDatepicker]="fromPicker"
+          (dateChange)="fromDate = $event.value; onDateChange()"
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+        <mat-datepicker #fromPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="date-picker">
+        <mat-label>To</mat-label>
+        <input
+          matInput
+          [matDatepicker]="toPicker"
+          (dateChange)="toDate = $event.value; onDateChange()"
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+        <mat-datepicker #toPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <button mat-button (click)="clearAllFilters()">Clear All Filters</button>
+  </div>
+</mat-menu>
+
+  <table style="margin-top: 30px;" mat-table [dataSource]="allocateTrackerData" class="subscription-table">
+    <ng-container matColumnDef="SNo">
+      <th mat-header-cell *matHeaderCellDef>S.No</th>
+      <td mat-cell *matCellDef="let element">{{ element.SNo }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="TrackerId">
+      <th mat-header-cell *matHeaderCellDef>Tracker ID</th>
+      <td mat-cell *matCellDef="let element">{{ element.TrackerId }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="TrackerName">
+      <th mat-header-cell *matHeaderCellDef>Tracker Name</th>
+      <td mat-cell *matCellDef="let element">{{ element.TrackerName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="LastUser">
+      <th mat-header-cell *matHeaderCellDef>Last User</th>
+      <td mat-cell *matCellDef="let element">{{ element.LastUser }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="AdminId">
+      <th mat-header-cell *matHeaderCellDef>Admin ID</th>
+      <td mat-cell *matCellDef="let element">{{ element.AdminId }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="MidifiedTime">
+      <th mat-header-cell *matHeaderCellDef>Modified Time</th>
+      <td mat-cell *matCellDef="let element">{{ element.ModifiedTime }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['SNo', 'TrackerId', 'TrackerName', 'LastUser', 'AdminId', 'MidifiedTime']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['SNo', 'TrackerId', 'TrackerName', 'LastUser', 'AdminId', 'MidifiedTime']"></tr>
+  </table>
+</div>
+
+
+<!-- Tracker Details View -->
+<div *ngIf="selectedTracker">
+  <div class="details-container">
+    <div class="details-header-container">
+      <button mat-icon-button (click)="goBack()" class="go-back-button">
+        <mat-icon>arrow_back_ios</mat-icon>
+      </button>
+      <h2 class="details-header">View Tracker Details</h2>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-key">Tracker Id</span>
+        <span class="detail-value">: {{ selectedTracker?.TrackerId }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">TrackerName</span>
+        <span class="detail-value"
+          >: {{ selectedTracker?.TrackerName }}</span
+        >
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">RegistrationDateTime</span>
+        <span class="detail-value">: {{ selectedTracker?.RegistrationDateTime }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">NameOfTheUser</span>
+        <span class="detail-value"
+          >: {{ selectedTracker?.NameOfTheUser }}</span
+        >
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">UserLoginId</span>
+        <span class="detail-value">: {{ selectedTracker?.UserLoginId }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">TrackerStatus</span>
+        <span class="detail-value">: {{ selectedTracker?.TrackerStatus }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">TrackerTotalCredit</span>
+        <span class="detail-value"
+          >: {{ selectedTracker?.TrackerTotalCredit }}</span
+        >
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">TotalConsumedCredit</span>
+        <span class="detail-value"
+          >: {{ selectedTracker?.TotalConsumedCredit }}</span
+        >
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">LastUpdatedTime</span>
+        <span class="detail-value"
+          >: {{ selectedTracker?.LastUpdatedTime }}</span
+        >
+      </div>
+    </div>
+  </div>
+</div>

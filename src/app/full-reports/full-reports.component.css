@@ -1,0 +1,80 @@
+.container {
+    padding: 20px;
+    overflow: hidden;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.export-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+.export-button{
+    border-color: var(--text-color);
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.export-button:hover {
+    background-color: rgba(20, 189, 171, 0.1);
+    color: var(--text-color);
+}
+
+.simple-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}
+
+.simple-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.table-header {
+    background-color: #f4f4f4;
+    color: #333;
+    font-weight: 600;
+    padding: 10px 15px;
+    font-size: 14px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-cell {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #555;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-row:hover {
+    background-color: #fafafa;
+}
+
+.mat-row:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+button[mat-icon-button] {
+    margin-right: 16px;
+    background-color: transparent;
+    color: #333;
+    border: none;
+    padding: 0;
+}
+
+button[mat-icon-button]:hover {
+    background-color: transparent;
+    color: #555;
+}

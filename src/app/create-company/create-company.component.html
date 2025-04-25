@@ -1,0 +1,43 @@
+
+<div style="margin: 20px 40px;">
+    <h2 style="text-align: center; margin-top: 0; margin-bottom: 30px;">Create Company</h2>
+    <div style="display: flex;">
+        <mat-form-field class="search-box" appearance="outline">
+            <mat-label>Company Name</mat-label>
+            <input matInput type="text" [(ngModel)]="name">
+          </mat-form-field>
+          <mat-form-field style="margin-left: 50px;" class="search-box" appearance="outline">
+            <mat-label>Contact Person Name</mat-label>
+            <input matInput type="text" [(ngModel)]="contactPersonName">
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="search-box" appearance="outline">
+            <mat-label>Contact Email ID</mat-label>
+            <input matInput type="text" [(ngModel)]="contactEmailId">
+          </mat-form-field>
+          <mat-form-field style="margin-left: 50px;" class="search-box" appearance="outline">
+            <mat-label>Contact Phone Number</mat-label>
+            <input matInput type="text" [(ngModel)]="contactPersonPhoneNumber">
+          </mat-form-field>
+    </div>
+    <div style="display: flex;">
+        <div style="display: grid;">
+            <label for="file-logo">
+                Company Logo
+            </label>
+            <img  [src]="companyLogo" width="100" height="100" style="margin: 5px 0;" />
+            <input type="file" id="file-logo" (change)="onLogoSelected($event)" />
+        </div>
+        <div style="display: grid;">
+            <label for="file-logo">
+                GST Certificate
+            </label>
+            <img  [src]="companyLogo" width="100" height="100" style="margin: 5px 0;" />
+            <input type="file" id="file-logo" (change)="onGstCertificateSelected($event)" />
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center;margin-top: 20px;">
+        <button style="padding-left: 50px;padding-right: 50px;" mat-raised-button color="primary" (click)="submit()">SUBMIT</button>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+<div class="form-container">
+    <h1 class="header-text">
+        {{isViewMode ? 'View Dataformat' : isEditMode ? 'Update Dataformat' : 'Register Dataformat'}}
+    </h1>
+    
+    <form [formGroup]="dataFormatForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Data Format Name</mat-label>
+        <input matInput formControlName="dataFormatName" placeholder="Give a name for the Data Format" [readonly]="isViewMode">
+        <mat-error *ngIf="dataFormatForm.get('dataFormatName')?.invalid && dataFormatForm.get('dataFormatName')?.touched">
+          Data Format Name is required
+        </mat-error>
+      </mat-form-field>
+  
+      <div class="contact-details-container">
+        <mat-form-field appearance="outline" class="select-details-input">
+          <mat-label>Encryption Enabled</mat-label>
+          <mat-select formControlName="encryptionEnabled">
+            <mat-option *ngFor="let enabled of encryptionEnabledOptions" [value]="enabled">
+              {{ enabled }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="dataFormatForm.get('encryptionEnabled')?.touched && dataFormatForm.get('encryptionEnabled')?.invalid">
+            Encryption Enabled is required.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="contact-details-input">
+          <mat-label>Type of Encryption</mat-label>
+          <input matInput formControlName="typeOfEncryption" [readonly]="isViewMode">
+          <mat-error *ngIf="dataFormatForm.get('typeOfEncryption')?.invalid && dataFormatForm.get('typeOfEncryption')?.touched">
+            Type Of Encryption is required.
+          </mat-error>
+        </mat-form-field>
+      </div>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Sample Format</mat-label>
+        <textarea matInput rows="3" formControlName="sampleFormat" [readonly]="isViewMode"></textarea>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Decode Information</mat-label>
+        <textarea matInput rows="3" formControlName="decodeInformation" [readonly]="isViewMode"></textarea>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description" [readonly]="isViewMode"></textarea>
+      </mat-form-field>
+  
+      <div class="button-container" *ngIf="!isViewMode">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          class="submit-btn"
+          [disabled]="loading"
+        >
+          <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Submit' }}</span>
+          <span *ngIf="loading" class="loader"></span>
+        </button>
+      </div>
+  
+    </form>
+  </div>
+  

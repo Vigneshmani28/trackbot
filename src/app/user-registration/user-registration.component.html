@@ -1,0 +1,64 @@
+<div class="form-container">
+  <h1 class="header-text">Register User</h1>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Name of User</mat-label>
+        <input matInput formControlName="userName">
+        <mat-error *ngIf="userForm.get('userName')?.invalid && userForm.get('userName')?.touched">
+            UserName is required
+        </mat-error>
+      </mat-form-field>
+
+      <div class="contact-details-container">
+        <mat-form-field appearance="outline" class="contact-details-input">
+          <mat-label>User Email</mat-label>
+          <input matInput formControlName="userEmail">
+          <mat-error *ngIf="userForm.get('userEmail')?.invalid && userForm.get('userEmail')?.touched">
+              User Email is required or invalid.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="select-details-input">
+          <mat-label>Enable Admin Rights</mat-label>
+          <mat-select formControlName="adminRights">
+            <mat-option *ngFor="let rights of adminRights" [value]="rights">
+              {{ rights }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="userForm.get('adminRights')?.touched && userForm.get('adminRights')?.invalid">
+            Admin Rights required.
+          </mat-error>
+        </mat-form-field>
+      </div>
+      
+      <div>
+        <mat-checkbox formControlName="self">Self</mat-checkbox>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Customer</mat-label>
+        <mat-select formControlName="customerName">
+          <mat-option *ngFor="let customer of customersList" [value]="customer">
+            {{ customer }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="userForm.get('customerName')?.touched && userForm.get('customerName')?.invalid">
+          CustomerName is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3"  formControlName="description"></textarea>
+      </mat-form-field>
+
+      <div class="button-container">
+        <button mat-raised-button color="primary" type="submit" class="submit-btn">
+          Submit
+        </button>
+      </div>
+      
+    </form>
+  </div>
+  

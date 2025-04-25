@@ -1,0 +1,271 @@
+<div *ngIf="!selectedCompany && !selectedSubscription">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1 class="header-text">Companies</h1>
+    <button mat-raised-button color="primary" class="top-right-corner" (click)="createCompany()"> <mat-icon>business</mat-icon> Add a Company</button>
+  </div>
+
+  <div>
+    <mat-form-field class="small" appearance="outline">
+      <mat-label>Search Company Name</mat-label>
+      <input matInput type="text" (keyup)="applyFilter($event, 'CompanyName')">
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="loading-content">
+      <mat-progress-spinner mode="indeterminate" diameter="60" color="primary"></mat-progress-spinner>
+      <p>Loading companies, please wait...</p>
+    </div>
+  </div>
+
+  <div *ngIf="!loading">
+    <div class="sort-container" style="display: flex; justify-content: end; align-items: center;">
+      <mat-form-field appearance="outline" class="small-input">
+        <mat-select [(value)]="sortOrder" (selectionChange)="sortData()" panelClass="custom-dropdown-panel" [panelWidth]="'300px'" hideSingleSelectionIndicator>
+          <mat-option value="asc">Sort By</mat-option>
+          <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+            <mat-pseudo-checkbox [state]="sortOrder === option.value ? 'checked' : 'unchecked'"></mat-pseudo-checkbox>
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    
+    <mat-card class="card">
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSource" class="trackers" style="padding: 10px;">
+          
+          <ng-container *ngFor="let column of displayedColumns">
+            <ng-container *ngIf="column !== 'Actions'">
+              <ng-container [matColumnDef]="column">
+                <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">{{ columnHeaderMap[column] || column }}</th>
+                <td mat-cell *matCellDef="let emp">
+                  {{ 
+                    column === 'RegistrationDateTime' 
+                      ? (emp[column] | date: 'dd/MM/yyyy, h:mm:ss a') 
+                      : column.includes('Date') 
+                        ? (emp[column] | date: 'dd/MM/yyyy') 
+                        : emp[column] 
+                  }}
+                </td>
+                             
+              </ng-container>
+            </ng-container>
+          </ng-container>
+
+          <ng-container matColumnDef="Actions">  
+            <th mat-header-cell *matHeaderCellDef style="font-weight: bold;">Actions</th>
+            <td mat-cell *matCellDef="let emp">
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon> 
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="viewCompanyDetails(emp)">View Details</button>
+                <button mat-menu-item (click)="openCompanyForm(emp)">Edit Details</button>
+                <button mat-menu-item (click)="addSubscriptionClick(emp)">Add Subscription</button>
+                <button mat-menu-item>Delete Company</button>
+                <button mat-menu-item>Block Company</button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let emprow; columns: displayedColumns"></tr>
+          
+        </table>
+      </div>
+    </mat-card>
+  </div>
+  
+  <mat-paginator #paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+</div>
+
+<!-- Subscription View -->
+<div *ngIf="selectedSubscription">
+  <div class="subscription-container">
+    <div class="details-header-container">
+      <button mat-icon-button (click)="goBack()" class="go-back-button">
+        <mat-icon>arrow_back_ios</mat-icon>
+      </button>
+      <h2 class="details-header">Add Subscription</h2>
+    </div>
+
+      <form [formGroup]="subscriptionForm">
+        
+        <!-- First Row: Billing Date & Expiry Date -->
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Billing Date</mat-label>
+            <input matInput [matDatepicker]="billingDatePicker" formControlName="billingDate">
+            <mat-datepicker-toggle matIconSuffix [for]="billingDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #billingDatePicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Expiry Date</mat-label>
+            <input matInput [matDatepicker]="expiryDatePicker" formControlName="expiryDate">
+            <mat-datepicker-toggle matIconSuffix [for]="expiryDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #expiryDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Second Row: Mode of Payment & Payment Date -->
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Mode of Payment</mat-label>
+            <input matInput formControlName="paymentMode" type="text">
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Payment Date</mat-label>
+            <input matInput [matDatepicker]="paymentDatePicker" formControlName="paymentDate">
+            <mat-datepicker-toggle matIconSuffix [for]="paymentDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #paymentDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Third Row: Description (Full Width) -->
+        <div class="form-row">
+          <mat-form-field class="full-width textarea-container" appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea 
+              matInput 
+              rows="3" 
+              formControlName="description" 
+              (input)="updateCharCount()" 
+              [maxlength]="maxCharLimit">
+            </textarea>
+            <div class="char-counter">{{ charCount }} / {{ maxCharLimit }}</div>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-checkbox formControlName="blockCompany">Block Company on expiry</mat-checkbox>
+        </div>
+        
+
+        <!-- Submit Button -->
+        <div class="button-container">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit" 
+            class="submit-btn"
+            (click)="saveSubscription()"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+  </div>
+  <table mat-table [dataSource]="subscriptionData" class="subscription-table">
+    <ng-container matColumnDef="sNo">
+      <th mat-header-cell *matHeaderCellDef> S.No </th>
+      <td mat-cell *matCellDef="let element"> {{ element.sNo }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="companyName">
+      <th mat-header-cell *matHeaderCellDef> Company Name </th>
+      <td mat-cell *matCellDef="let element"> {{ element.companyName }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="subscriptionDate">
+      <th mat-header-cell *matHeaderCellDef> Subscription Date </th>
+      <td mat-cell *matCellDef="let element"> {{ element.subscriptionDate }} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="billingDate">
+      <th mat-header-cell *matHeaderCellDef> Billing Date </th>
+      <td mat-cell *matCellDef="let element"> {{ element.billingDate }} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="expiryDate">
+      <th mat-header-cell *matHeaderCellDef> Expiry Date </th>
+      <td mat-cell *matCellDef="let element"> {{ element.expiryDate }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="blockOnExpiry">
+      <th mat-header-cell *matHeaderCellDef> Block On Expiry</th>
+      <td mat-cell *matCellDef="let element"> {{ element.blockOnExpiry }} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="modeOfPayment">
+      <th mat-header-cell *matHeaderCellDef> Mode of Payment </th>
+      <td mat-cell *matCellDef="let element"> {{ element.modeOfPayment }} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="paymentDate">
+      <th mat-header-cell *matHeaderCellDef> Payment Date </th>
+      <td mat-cell *matCellDef="let element"> {{ element.paymentDate }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell *matHeaderCellDef> User </th>
+      <td mat-cell *matCellDef="let element" style="text-decoration: underline;"> {{ element.user }} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef> Description </th>
+      <td mat-cell *matCellDef="let element"> {{ element.description }} </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="subscriptionTableColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: subscriptionTableColumns;"></tr>
+  </table>
+</div>
+
+
+<!-- Company Details View -->
+<div *ngIf="selectedCompany">
+  <div class="details-container">
+    <div class="details-header-container">
+      <button mat-icon-button (click)="goBack()" class="go-back-button">
+        <mat-icon>arrow_back_ios</mat-icon>
+      </button>
+      <h2 class="details-header">View Company Details</h2>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-key">Company Name</span>
+        <span class="detail-value">: {{ selectedCompany?.CompanyName }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">Company Type</span>
+        <span class="detail-value">: {{ selectedCompany?.CompanyType }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">GST Number</span>
+        <span class="detail-value">: {{ selectedCompany?.GSTNumber }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">Director Name</span>
+        <span class="detail-value">: {{ selectedCompany?.DirectorName }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">Contact Person Name</span>
+        <span class="detail-value">: {{ selectedCompany?.ContactPersonName }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">Contact Person Number</span>
+        <span class="detail-value">: {{ selectedCompany?.PhoneNumber }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">Contact Email</span>
+        <span class="detail-value">: {{ selectedCompany?.Email }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">Login Email Id</span>
+        <span class="detail-value">: {{ selectedCompany?.LoginEmailId }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">Address</span>
+        <span class="detail-value">: {{ selectedCompany?.Address }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-key">Description</span>
+        <span class="detail-value">: {{ selectedCompany?.Description }}</span>
+      </div>
+    </div>
+  </div>
+</div>

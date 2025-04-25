@@ -1,0 +1,706 @@
+<div style="height: 100%;">
+  <mat-drawer-container [hasBackdrop]="true" style="height: 100%;">
+    <mat-drawer #drawer mode="over" class="mat-drawer-child" [(opened)]="isDrawerOpened" position="start" >
+      <ng-container *ngIf="currentView === 'main'">
+        <app-tracker-details *ngIf="currentTracker && currentMockMarker" (navigate)="setView($event)" [tracker]="currentTracker" [mockTracker]="currentMockMarker" [trackerList]="trackers" (closeDrawer)="closeDrawer($event)" (startPlayback)="startPlayback($event)" (startTracking)="startTracking($event)" (dateRangeSelected)="onDateRangeChange($event)"></app-tracker-details>
+      </ng-container>
+      <ng-container *ngIf="currentView === 'reports'">
+        <app-tracker-reports *ngIf="currentTracker && currentMockMarker" (goBack)="setView('main')" [tracker]="currentTracker" [mockTracker]="currentMockMarker" (closeDrawer)="closeDrawer($event)"  [onSwitchView]="onSwitchView"></app-tracker-reports>
+      </ng-container>
+      <ng-container *ngIf="currentView === 'settings'">
+        <app-tracker-settings *ngIf="currentTracker && currentMockMarker" (goBack)="setView('main')" [tracker]="currentTracker" [mockTracker]="currentMockMarker" (closeDrawer)="closeDrawer($event)" (deviceInterval)="deviceInterval($event)" ></app-tracker-settings>
+      </ng-container>
+      <ng-container *ngIf="currentView === 'chat'">
+        <app-tracker-chat *ngIf="currentTracker && currentMockMarker" (goBack)="setView('main')" [tracker]="currentTracker" [mockTracker]="currentMockMarker" (closeDrawer)="closeDrawer($event)"></app-tracker-chat>
+      </ng-container>
+    </mat-drawer>
+    <mat-drawer-content style="height: 100%;">
+      <div style="position: relative;height: 100%;">
+        <google-map width="100%" height="100%" mapId="Demo_Map" [center]="center" [zoom]="zoom" (mapInitialized)="mapInitialized($event)" [options]="mapOptions" (mapClick)="onMapClick($event)">
+          @if (playbackRequest) {
+          @for (item of playbackRequest.list; track item.deviceName;let i = $index) {
+          @if (i == 0 || i == playbackRequest.list.length - 1) {
+          <map-advanced-marker 
+            [position]="currentTrackingMarker!.position" [title]="currentTrackingMarker!.tracker!.deviceName" />
+          } @else{
+          <map-advanced-marker [position]="{lat: item.latitude, lng: item.longitude}" [title]="item.deviceName" />
+          }
+          <!-- <map-advanced-marker [content]="getIcon()" [position]="{lat: item.latitude, lng: item.longitude}" [title]="item.deviceName" /> -->
+          }
+          <map-polyline *ngIf="vertices" [path]="vertices" />
+          } @else if(currentTrackingMarker) {
+          <map-advanced-marker 
+            [position]="currentTrackingMarker.position" [title]="currentTrackingMarker.tracker.deviceId" />
+          } @else {
+
+          <map-advanced-marker *ngFor="let marker of markers" [position]="marker.position"
+          [content]="marker.content" (mapClick)="oldMarkerClick(marker.tracker)"></map-advanced-marker>
+            
+            
+             <ng-container *ngFor="let marker of markersData">
+              <!-- <map-advanced-marker
+                [position]="marker.currentMarkerPosition.lat ? marker.currentMarkerPosition : marker.trackingData[0]"
+                [content]="marker.content"
+                (mapClick)="markerClick(marker.id)">
+              </map-advanced-marker>
+           -->
+
+              <map-polyline 
+                *ngIf="dynamicRoutePathMap[marker.id]" 
+                [path]="dynamicRoutePathMap[marker.id]" 
+                [options]="polylineOptionsMap[marker.id] || polylineOptions">
+              </map-polyline>
+
+              <map-polyline 
+                *ngIf="lastTenRoutePathMap[marker.id]" 
+                [path]="lastTenRoutePathMap[marker.id]" 
+                [options]="polylineOptionsMap[marker.id] || polylineOptions">
+              </map-polyline>
+            </ng-container>
+
+            <ng-container *ngFor="let marker of geoFenceMarkers; let i = index">
+              <map-marker *ngIf="marker"
+            [position]="marker"
+            [options]="{
+              draggable: true,
+              icon: draggingIndex === i ? highlightedIcon : defaultIcon
+            }"
+            (mapDragstart)="onDragStart(i)"
+            (mapDragend)="onMarkerDrag($event, i)">
+              </map-marker>
+
+            </ng-container>
+
+            <map-polygon 
+              *ngIf="isPolygon && geoFenceMarkers.length >= 2"
+              [paths]="getValidPolygonPaths()" 
+              [options]="{ fillColor: selectedColor, strokeColor: selectedColor, strokeWeight: 2 }">
+            </map-polygon>
+
+            <ng-container *ngIf="showGeoFence">
+              <ng-container *ngFor="let geofence of geofences; let i = index">
+                <ng-container *ngIf="geofence.type === 'polygon'">
+                  <map-polygon
+                    [paths]="geofence.paths"
+                    (polygonClick)="onPolygonClick(i)"
+                    [options]="{
+                      fillColor: geofence.color,
+                      fillOpacity: 0.35,
+                      strokeColor: geofence.color,
+                      strokeOpacity: 0.8,
+                      strokeWeight: 2
+                    }"
+                  ></map-polygon>
+                  <map-marker
+                    [position]="getPolygonCenter(geofence.paths)"
+                    [label]="geofence.name"
+                  ></map-marker>
+                </ng-container>
+            
+                <ng-container *ngIf="geofence.type === 'circle'">
+                  <map-circle
+                    [center]="geofence.center"
+                    [radius]="geofence.radius"
+                    (circleClick)="onPolygonClick(i)"
+                    [options]="{
+                      fillColor: geofence.color,
+                      fillOpacity: 0.35,
+                      strokeColor: geofence.color,
+                      strokeOpacity: 0.8,
+                      strokeWeight: 2
+                    }"
+                  ></map-circle>
+                  <map-marker
+                    [position]="geofence.center"
+                    [label]="geofence.name"
+                  ></map-marker>
+                </ng-container>
+              </ng-container>
+            </ng-container>            
+
+                <!-- Distance Label Marker at Midpoint -->
+                <map-advanced-marker *ngIf="midpointMarker && isMeasureDistanceChecked"
+                     [position]="midpointMarker"
+                     [content]="distanceContent">
+                </map-advanced-marker>
+
+                <!-- Red Marker -->
+                <map-advanced-marker 
+                *ngIf="redMarker" 
+                [position]="redMarker.position" 
+                [content]="redMarker.content">
+                </map-advanced-marker>
+
+              <!-- Start and End Markers -->
+              <map-advanced-marker *ngIf="startMarkerPosition" [position]="startMarkerPosition" title="Start Location">
+              </map-advanced-marker>
+
+              <map-advanced-marker *ngIf="endMarkerPosition" [position]="endMarkerPosition" title="End Location">
+              </map-advanced-marker>
+
+  
+              <ng-container *ngFor="let marker of lastTenPointMarkers">
+                <map-advanced-marker
+                  [position]="marker.position" 
+                  [content]="marker.content"
+                  [title]="getPositionTitle(marker.position)">
+              </map-advanced-marker>
+              </ng-container>
+
+              <ng-container *ngFor="let point of crossedPointMarkers">
+                <map-advanced-marker
+                  [position]="point.position"
+                  [content]="point.content"
+                  [title]="getPositionTitle(point.position)"
+                >
+                </map-advanced-marker>
+              </ng-container>
+
+              <map-marker
+              *ngIf="selectedAirport"
+              [position]="{ lat: selectedAirport.lat, lng: selectedAirport.lng }"
+              [label]="selectedAirport.name">
+            </map-marker>
+
+          <!-- @for (tracker of trackers; track tracker.deviceName) {
+              <map-advanced-marker [position]="{ lat: tracker.latitude, lng: tracker.longitude }" 
+              [title]="tracker.deviceName"
+                [content]="getIcon()"
+                (mapClick)="markerClick($event, tracker)" />
+              } -->
+          }
+
+            <!-- Messages List -->
+            <div *ngIf="showMessages" class="message-notification">
+              <div class="notification-header">
+                <div class="header-left">
+                  <span class="notification-title">Messages</span>
+                  <span class="message-count">{{messages.length}} new</span>
+                </div>
+                <button class="clear-all" (click)="clearAllMessages()">Clear All</button>
+              </div>
+              
+              <div *ngIf="messages.length > 0; else noMessages" class="messages-container">
+                <div *ngFor="let message of messages" class="message-item">
+                  <div class="message-header">
+                    <div class="message-info">
+                      <span class="tracker-id">#{{ message.trackerId }}</span>
+                      <span class="tracker-name">{{ message.trackerName }}</span>
+                    </div>
+                    <button class="close-btn" (click)="closeMessage(message.id)">×</button>
+                  </div>
+                  <div class="message-content">
+                    <p>{{ message.text }}</p>
+                  </div>
+                  <div class="message-footer">
+                    <button class="reply-btn" (click)="replyToMessage(message.trackerId)">Reply</button>
+                  </div>
+                </div>
+              </div>
+            
+              <ng-template #noMessages>
+                <div class="empty-state">
+                  <p>No new messages</p>
+                </div>
+              </ng-template>
+            </div>
+
+            <!-- Tracker List View -->
+          <div class="tracker-list-container" *ngIf="trackerListShow">
+
+            <div style="display: flex; justify-content: flex-end; cursor: pointer;pointer-events: all;" (click)="trackerListShowToggle()">
+              <mat-icon style="font-size: 14px; pointer-events: none;">close</mat-icon>
+            </div>
+            
+
+            <div class="tracker-list">
+              <div class="tracker-item" *ngFor="let tracker of trackerOptions">
+                <span class="tracker-name">{{ tracker.name }}</span>
+                <mat-checkbox 
+                class="tracker-checkbox" 
+                [(ngModel)]="tracker.isChecked" 
+                (change)="onTrackerOptionChange(tracker)">
+              </mat-checkbox>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; cursor: pointer; gap: 5px;" (click)="toggleTrackerView()">
+                <h3>{{ selectedView }}</h3>
+                <mat-icon>{{ showDropdown ? 'expand_less' : 'expand_more' }}</mat-icon>
+              </div>
+              <div class="dropdown-container">
+                <div *ngIf="showDropdown" class="dropdown-menu">
+                  <div class="dropdown-item" (click)="setTrackerView('Trackers')">
+                    Trackers
+                  </div>
+                  <div class="dropdown-item" (click)="setTrackerView('Groups')">
+                    Groups
+                  </div>
+                </div>
+              </div>
+              
+              <div style="display: flex; align-items: center; gap: 5px; cursor: pointer;" (click)="toggleSelectAll()">
+                <span>Select All</span>
+                <mat-icon>{{ selectAllTrackerChecked ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+              </div>
+            </div>
+
+            <!-- Tracker View -->
+          <ng-container *ngIf="selectedView === 'Trackers'">
+            <!-- Tracker Search -->
+            <form class="search-form">
+              <mat-form-field class="small-input" appearance="outline">
+                <mat-label style="font-size: 14px">Enter Tracker ID / Name</mat-label>
+                <input
+                  #input
+                  type="text"
+                  placeholder="Enter Tracker ID / Name"
+                  matInput
+                  [formControl]="myControl"
+                  [matAutocomplete]="autoTrackers"
+                  (input)="filter()"
+                  (focus)="filter()"
+                  class="small-input-field"
+                />
+                <mat-icon matSuffix *ngIf="myControl.value" (click)="clearInput()" class="clear-icon">
+                  close
+                </mat-icon>
+                <mat-autocomplete #autoTrackers="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredTrackerOptions" [value]="option.id" style="font-size: 14px">
+                    {{ option.id + ' | ' + option.id }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </form>
+
+            <!-- Tracker List -->
+            <div class="tracker-list">
+              <div class="tracker-item" *ngFor="let tracker of filteredTrackerOptions">
+                <span class="tracker-name">{{ tracker.id + ' | ' + tracker.id }}</span>
+                
+                <ng-container *ngIf="selectedTrackers.get(tracker.id)">
+                  <div style="display: flex; gap: 5px;">
+                    <div class="color-box" 
+                        [ngStyle]="{ 'background-color': polylineOptionsMap[tracker.id]?.strokeColor || polylineOptions.strokeColor }">
+                      <input 
+                        type="color" 
+                        [value]="polylineOptionsMap[tracker.id]?.strokeColor || polylineOptions.strokeColor" 
+                        (input)="changePolylineColor($event, tracker.id)" 
+                        class="color-input" 
+                      />
+                    </div>
+
+                    <mat-icon style="cursor: pointer;" 
+                        (click)="showTrack(tracker.id)" 
+                        matTooltip="{{ selectedLastFewTrackerIds.has(tracker.id) ? 'Turn off' : 'Show Last 150 Points' }}" [ngClass]="{'disabled': true}">
+                        {{ selectedLastFewTrackerIds.has(tracker.id) ? 'insights' : 'timeline' }}
+                    </mat-icon>
+
+                    <mat-icon style="cursor: pointer;" (click)="gotoMarker(tracker.id)">
+                      {{ activeMarkerId === tracker.id ? 'near_me_disabled' : 'near_me' }}
+                    </mat-icon>
+                  </div>
+                </ng-container>
+
+                <mat-checkbox class="tracker-checkbox"
+                  [checked]="selectedTrackers.get(tracker.id) || false" 
+                  (change)="toggleTrackerSelection(tracker.id, $event)">
+                </mat-checkbox>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Group View -->
+          <ng-container *ngIf="selectedView === 'Groups'">
+            <!-- Group Search -->
+            <form class="search-form">
+              <mat-form-field class="small-input" appearance="outline">
+                <mat-label style="font-size: 14px">Enter Group ID / Name</mat-label>
+                <input
+                  #groupInput
+                  type="text"
+                  placeholder="Enter Group ID / Name"
+                  matInput
+                  [formControl]="myGroupControl"
+                  [matAutocomplete]="autoGroups"
+                  (input)="groupFilter()"
+                  (focus)="groupFilter()"
+                  class="small-input-field"
+                />
+                <mat-icon matSuffix *ngIf="myGroupControl.value" (click)="clearInput()" class="clear-icon">
+                  close
+                </mat-icon>
+                <mat-autocomplete #autoGroups="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredGroupTrackerOptions" [value]="option.id" style="font-size: 14px">
+                    {{ option.id + ' | ' + option.name }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </form>
+
+            <!-- Group List -->
+            <div class="tracker-list">
+              <div class="tracker-item" *ngFor="let group of filteredGroupTrackerOptions">
+                <span class="tracker-name">{{ group.id + ' | ' + group.id }}</span>
+
+                <ng-container *ngIf="selectedGroups.get(group.id)">
+                  <div style="display: flex; gap: 5px;">
+                    <!-- <div class="color-box" 
+                        [ngStyle]="{ 'background-color': polylineOptionsMap[group.id]?.strokeColor || polylineOptions.strokeColor }">
+                      <input 
+                        type="color" 
+                        [value]="polylineOptionsMap[group.id]?.strokeColor || polylineOptions.strokeColor" 
+                        (input)="changePolylineColor($event, group.id, 'groups')" 
+                        class="color-input" 
+                      />
+                    </div> -->
+
+                    <mat-icon style="cursor: pointer;" 
+                      (click)="showGroupTrack(group.id)" 
+                      matTooltip="{{ selectedLastFewTrackerIds.has(group.id) ? 'Turn off Group' : 'Show Group Last 150 Points' }}" [ngClass]="{'disabled': true}">
+                      {{ selectedLastFewTrackerIds.has(group.id) ? 'insights' : 'timeline' }}
+                    </mat-icon>
+
+                  </div>
+                </ng-container>
+
+                <mat-checkbox class="tracker-checkbox"
+                  [checked]="selectedGroups.get(group.id) || false" 
+                  (change)="toggleGroupTrackerSelection(group.id, $event)">
+                </mat-checkbox>
+              </div>
+            </div>
+          </ng-container>
+          </div>
+          
+          <button *ngIf="!showGeoFence" class="map-float-btn" (click)="trackerListShowToggle()">
+            <mat-icon>subject</mat-icon>
+            Trackers
+          </button>
+
+          <button *ngIf="showGeoFence" class="map-float-btn" (click)="addGeoFenceScreenToggle()">
+            <mat-icon>add_location_alt</mat-icon>
+            Add Geofence
+          </button>
+
+          <!-- Geofence Menu View -->
+          <div class="tracker-list-container" *ngIf="geofenceMenuShow">
+            <div style="display: flex; align-items: center; justify-content: space-between; pointer-events: all; margin-bottom: 5px;">
+              <div style="flex: 1; text-align: center;">
+                <h3 style="margin: 0;">{{ 'Geofence ' + selectedGeofence }}</h3>
+              </div>
+              <div style="cursor: pointer;" (click)="toggleGeofenceView()">
+                <mat-icon style="font-size: 14px;">close</mat-icon>
+              </div>
+            </div>
+            
+
+            <!-- Allocated Trackers Section -->
+            <div *ngIf="allocatedTrackersMap.get(selectedGeofence ?? 0)?.length">
+              <div class="tracker-list">
+                <div class="tracker-item" *ngFor="let tracker of allocatedTrackersMap.get(selectedGeofence ?? 0)">
+                  <span class="tracker-name">{{ tracker.id + ' | ' + tracker.id }}</span>
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="unallocateTracker(tracker.id)"
+                    style="font-size: 12px; padding: 2px 8px; color: var(--text-color);"
+                  >
+                    Deallocate
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Unallocated Trackers Section -->
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; cursor: pointer; gap: 5px;">
+                <h3>Unallocated Trackers</h3>
+              </div>
+            </div>
+
+            <!-- Tracker View -->
+            <ng-container *ngIf="selectedView === 'Trackers'">
+              <!-- Tracker Search -->
+              <form class="search-form">
+                <mat-form-field class="small-input" appearance="outline">
+                  <mat-label style="font-size: 14px">Enter Tracker ID / Name</mat-label>
+                  <input
+                    #input
+                    type="text"
+                    placeholder="Enter Tracker ID / Name"
+                    matInput
+                    [formControl]="myControl"
+                    [matAutocomplete]="autoTrackers"
+                    (input)="filter()"
+                    (focus)="filter()"
+                    class="small-input-field"
+                  />
+                  <mat-icon matSuffix *ngIf="myControl.value" (click)="clearInput()" class="clear-icon">
+                    close
+                  </mat-icon>
+                  <mat-autocomplete #autoTrackers="matAutocomplete">
+                    <mat-option *ngFor="let option of filteredTrackerOptions" [value]="option.id" style="font-size: 14px">
+                      {{ option.id + ' | ' + option.id }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </form>
+
+              <!-- Tracker List -->
+              <div class="tracker-list">
+                <div class="tracker-item" *ngFor="let tracker of filteredTrackerOptions">
+                  <span class="tracker-name">{{ tracker.id + ' | ' + tracker.id }}</span>
+                  <button
+                    mat-button
+                    color="primary"
+                    (click)="allocateTracker(tracker.id)"
+                    style="font-size: 12px; padding: 2px 8px; color: var(--text-color);"
+                  >
+                    Allocate
+                  </button>
+                </div>
+              </div>
+            </ng-container>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+              <button mat-stroked-button style="height: 48px; border-radius: 12px; color: var(--text-color); border-color: var(--text-color);" (click)="editGeofence()">
+                Edit
+              </button>
+            
+              <button mat-stroked-button style="height: 48px; border-radius: 12px; color: red; border-color: red;" (click)="deleteGeofence()">
+                Delete
+              </button>
+            </div>
+            
+          </div>
+
+          <!-- Container -->
+          <div *ngIf="addGeoFenceShow" class="geofence-form-container">
+            <!-- Header -->
+            <div class="form-header">
+              <h3>{{isEditMode ? 'Edit Geofence' : 'Create Geofence'}}</h3>
+              <button mat-icon-button class="close-btn"  (click)="addGeoFenceScreenToggle()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          
+            <!-- Shape Name Input -->
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Geofence Name</mat-label>
+              <input matInput placeholder="Enter name" [(ngModel)]="shapeName" />
+            </mat-form-field>
+          
+            <!-- Shape Type and Color Picker -->
+            <div class="form-row">
+              <!-- Toggle Button for Circle / Polygon -->
+              <div class="toggle-container">
+                <span class="toggle-label">Circle</span>
+                <mat-slide-toggle [(ngModel)]="isPolygon" color="primary" class="shape-toggle">
+                </mat-slide-toggle>
+                <span class="toggle-label">Polygon</span>
+              </div>
+          
+              <!-- Color Picker -->
+              <div class="color-picker-container">
+                <label class="color-label">Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" [(ngModel)]="selectedColor" />
+                </div>
+              </div>
+            </div>
+          
+            <!-- Coordinates Section -->
+            <div class="coordinates-section">
+              <div class="section-header">
+                <h4>Coordinates</h4>
+                <button mat-stroked-button color="primary" (click)="addCoord()" *ngIf="isPolygon" class="add-coord-btn">
+                  <mat-icon>add</mat-icon> Add Point
+                </button>
+              </div>
+          
+              <div class="coordinates-list">
+                <ng-container *ngFor="let coord of coordinates; let i = index">
+                  <div class="coord-item" *ngIf="isPolygon || i === 0">
+                    <div class="coord-header">
+                      <span class="point-label">Point {{i + 1}}</span>
+                      <button
+                        *ngIf="isPolygon && coordinates.length > 3"
+                        mat-icon-button
+                        color="warn"
+                        class="delete-btn"
+                        (click)="removeCoord(i)"
+                      >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                    
+                    <div class="coord-fields">
+                      <!-- Latitude -->
+                      <mat-form-field appearance="outline" class="coord-field">
+                        <mat-label>Latitude</mat-label>
+                        <input
+                          matInput
+                          type="number"
+                          [(ngModel)]="coord.lat"
+                          (focus)="selectCoord(i, 'lat')"
+                          (input)="onCoordManualChange(i)"
+                          placeholder="Latitude"
+                        />
+                      </mat-form-field>
+                
+                      <!-- Longitude -->
+                      <mat-form-field appearance="outline" class="coord-field">
+                        <mat-label>Longitude</mat-label>
+                        <input
+                          matInput
+                          type="number"
+                          [(ngModel)]="coord.lng"
+                          (focus)="selectCoord(i, 'lng')"
+                          (input)="onCoordManualChange(i)"
+                          placeholder="Longitude"
+                        />
+                      </mat-form-field>
+                    </div>
+          
+                    <!-- Radius (circle only) -->
+                    <mat-form-field
+                      *ngIf="!isPolygon"
+                      appearance="outline"
+                      class="radius-field"
+                    >
+                      <mat-label>Radius (meters)</mat-label>
+                      <input
+                        matInput
+                        type="number"
+                        [(ngModel)]="circleRadius"
+                        placeholder="Radius"
+                      />
+                      <span matSuffix>m</span>
+                    </mat-form-field>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+              <button mat-stroked-button (click)="addGeoFenceScreenToggle()">Cancel</button>
+              <button mat-flat-button color="primary" (click)="submitGeoFence()">
+                {{isEditMode ? 'Update' : 'Create'}}
+              </button>
+            </div>
+          </div>
+            <app-country-menu
+              *ngIf="showWeather | async"
+              (airportSelected)="updateMap($event)"
+              (resetMap)="onResetMap()"
+              class="country-menu">
+            </app-country-menu>
+
+            <app-kml-uploader
+  *ngIf="showKMLFileUploader | async"
+  (fileSelected)="handleKmlFiles($event)">
+</app-kml-uploader>
+
+<map-marker
+  *ngFor="let m of kmlMarkers"
+  [position]="m.position"
+  [label]="m.label">
+</map-marker>
+
+<!-- Colored Polylines -->
+<map-polyline
+  *ngFor="let polyline of kmlPolylinePaths"
+  [path]="polyline.path"
+  [options]="{ strokeColor: polyline.color, strokeWeight: 4 }">
+</map-polyline>
+
+
+
+        </google-map>
+        <div class="status-cards" *ngIf="totalTrackers !== '' && !playbackRequest && !currentTrackingMarker"
+          style="position: absolute;top: 0;left: 0;right: 0;margin-left: auto;margin-right: auto; margin-top: 100px;">
+          <mat-card class="tracker-status-card status-total">
+            <span class="tracker-status-card-title">Total</span>
+            <span class="tracker-status-card-count-total">{{ totalTrackers }}</span>
+          </mat-card>
+          <mat-card class="tracker-status-card status-active">
+            <span class="tracker-status-card-title">Active</span>
+            <span class="tracker-status-card-count-active">{{ activeTrackers }}</span>
+          </mat-card>
+          <mat-card class="tracker-status-card status-in-active">
+            <span class="tracker-status-card-title">Inactive</span>
+            <span class="tracker-status-card-count-inactive">{{ inActiveTrackers }}</span>
+          </mat-card>
+          <mat-card class="tracker-status-card status-sleep">
+            <span class="tracker-status-card-title">Sleep</span>
+            <span class="tracker-status-card-count-sleep">{{ sleepTrackers }}</span>
+          </mat-card>
+          <mat-card class="tracker-status-card status-alert" style="cursor: pointer;" (click)="openAcknowledge()">
+            <span class="tracker-status-card-title">Alert</span>
+            <span class="tracker-status-card-count-alert">{{ alertTrackers }}</span>
+          </mat-card>
+        </div>
+
+        <div *ngIf="showAcknowledgement" class="acknowledgement-container">
+          <div class="acknowledge-card">
+            <div class="acknowledge-header">
+              <h2>Acknowledge Alerts</h2>
+              <mat-icon (click)="closeAcknowledgement()" style="cursor: pointer;">close</mat-icon>
+            </div>
+        
+            <div class="acknowledge-body">
+              <ng-container *ngIf="acknowledgeTrackers.length > 0; else noAlerts">
+                <div class="acknowledge-item" *ngFor="let tracker of acknowledgeTrackers; let i = index">
+                  <div class="tracker-container">
+                    <div class="tracker-details">
+                      <h3>{{ i + 1 }}. {{ tracker.name }} ({{ tracker.trackerName }})</h3>
+                      <p class="alert-received">Alert Received: {{ tracker.alertReceived }}</p>
+                      <p class="tracker-location">Lat: {{ tracker.lat }}, Lng: {{ tracker.lng }}</p>
+                    </div>
+                    <div class="tracker-time">
+                      <span>{{ tracker.timeAgo }}</span>
+                    </div>
+                  </div>
+                  <div class="tracker-actions">
+                    <button mat-button class="custom-btn" (click)="showAcknowledgementBottomSheet('ELB1005')">Track</button>
+                    <button mat-button class="custom-btn" (click)="openAcknowledgeDialog(acknowledgeDialog, tracker)">
+                      Acknowledge
+                    </button>
+                  </div>
+                  <mat-divider></mat-divider>
+                </div>
+              </ng-container>
+            
+              <!-- No Acknowledgment Alerts Message -->
+              <ng-template #noAlerts>
+                <div class="no-alerts-message">
+                  No new acknowledgment alerts.
+                </div>
+              </ng-template>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>
+
+<ng-template #acknowledgeDialog>
+  <div class="dialog-container">
+    <h2 mat-dialog-title class="dialog-title">
+      <mat-icon class="acknowledge-icon">thumb_up_alt</mat-icon> Acknowledge Device
+    </h2>
+    <div mat-dialog-content class="dialog-content">
+      <p>Are you sure you want to acknowledge <strong>{{ selectedAcknowledgeTracker?.name }}</strong>?</p>
+    </div>
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button (click)="acknowledgeCloseDialog()" class="cancel-btn">Cancel</button>
+      <button mat-button color="primary" class="acknowledge-btn" (click)="acknowledgeClick(selectedAcknowledgeTracker.name)">Acknowledge</button>
+    </div>
+  </div>
+</ng-template>

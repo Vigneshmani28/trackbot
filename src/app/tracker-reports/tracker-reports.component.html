@@ -1,0 +1,44 @@
+<div class="tracker-details-root">
+    <div class="tracker-details-header-root">
+        <mat-icon class="tracker-header-icon" (click)="goBack.emit()">arrow_back_ios</mat-icon>
+        <span class="tracker-header-title">Reports</span>
+        <mat-icon style="cursor: pointer;" class="tracker-header-icon" (click)="close()">close</mat-icon>
+    </div>
+
+    <!-- Tracker Name Below Header -->
+    <div class="tracker-name">
+        <span class="tracker-header-text">{{mockTracker.deviceName}} - {{ tracker.deviceName }}</span>
+    </div>
+
+
+    <!-- Reports List -->
+    <div class="tracker-reports-list">
+        <div *ngFor="let report of trackerReportList" class="tracker-report-item">
+            <div class="tracker-report-details">
+                <span class="tracker-details-span-text"><strong>Lat:</strong> {{ report.Lat }}</span>
+                <span class="tracker-details-span-text"><strong>Long:</strong> {{ report.long }}</span>
+                <span class="tracker-details-span-text"><strong>GPS UTC:</strong> {{ report.gps_utc }}</span>
+                <span class="tracker-details-span-text"><strong>Heading:</strong> {{ report.heading }}</span>
+
+                <span class="tracker-details-span-text"><strong>GPS IST:</strong> {{ report.gps_ist }}</span>
+                <span class="tracker-details-span-text"><strong>Altitude(ft):</strong> {{ report.altitude }}</span>
+
+                <span class="tracker-details-span-text"><strong>Received UTC:</strong> {{ report.received_utc }}</span>
+                <span class="tracker-details-span-text"><strong>Battery:</strong> {{ report.battery }}%</span>
+
+                <span class="tracker-details-span-text"><strong>Received IST:</strong> {{ report.received_ist }}</span>
+                <span class="tracker-details-span-text"><strong>Speed(knots):</strong> {{ report.speed }}</span>
+                
+            </div>
+        </div>
+        <mat-divider />
+    </div>
+
+    <div class="all-reports-button-container">
+        <button mat-stroked-button class="all-reports-button" (click)="viewAllReports()">
+            All Reports
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+      
+</div>

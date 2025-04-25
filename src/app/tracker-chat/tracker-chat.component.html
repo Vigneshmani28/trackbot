@@ -1,0 +1,54 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <mat-icon class="back-icon" (click)="goBack.emit()">arrow_back_ios</mat-icon>
+    <div class="chat-title">
+        <span>Chat Box</span>
+        <span>{{mockTracker.deviceName}} - {{tracker.deviceName}}</span>
+    </div>
+    <mat-icon class="profile-icon" (click)="close()">close</mat-icon>
+</div>
+
+<div class="more-menu">
+  <mat-menu #menu="matMenu" class="export-chat-menu">
+    <button mat-menu-item (click)="exportChat()">
+      <mat-icon class="menu-icon">download</mat-icon>
+      <span class="menu-label">Export Chat (.CSV)</span>
+    </button>
+  </mat-menu>
+  <mat-icon [matMenuTriggerFor]="menu">more_horiz</mat-icon>
+</div>
+
+
+
+  <div class="chat-messages">
+    <div *ngFor="let msg of messages" [ngClass]="{'message': true, 'received': msg.type === 'received', 'sent': msg.type === 'sent'}">
+      <div class="message-text">{{ msg.text }}</div>
+      <div class="message-time">{{ msg.sender }} {{ msg.timestamp }}</div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <div class="recording-indicator" *ngIf="interimText">
+      {{ interimText }}
+    </div>
+    <input 
+      #messageInput
+      type="text" 
+      class="message-box" 
+      placeholder="Type a message..." 
+      [(ngModel)]="newMessage" 
+      (keyup.enter)="sendMessage()" 
+    />
+
+    
+    <mat-icon 
+      class="mic-icon" 
+      (click)="isListening ? stopListening() : startListening()" 
+      [ngClass]="{'active-mic': isListening}"
+    >
+      {{ isListening ? 'mic_off' : 'mic' }}
+    </mat-icon>
+
+    <mat-icon class="send-icon" (click)="sendMessage()">send</mat-icon>
+  </div>
+</div>

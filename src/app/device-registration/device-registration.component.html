@@ -1,0 +1,59 @@
+<div class="form-container">
+  <h1 class="header-text">
+    Register Device
+    </h1>
+    <form [formGroup]="deviceForm" (ngSubmit)="onSubmit()">
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Device Identifier</mat-label>
+        <input matInput formControlName="deviceIdentifier">
+        <mat-error *ngIf="deviceForm.get('deviceIdentifier')?.invalid && deviceForm.get('deviceIdentifier')?.touched">
+            Device Identifier is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Device Model Number</mat-label>
+        <input matInput formControlName="deviceModelNumber">
+        <mat-error *ngIf="deviceForm.get('deviceModelNumber')?.invalid && deviceForm.get('deviceModelNumber')?.touched">
+            Device Model Number is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Device Model Name</mat-label>
+        <input matInput formControlName="deviceModelName">
+        <mat-error *ngIf="deviceForm.get('deviceModelName')?.invalid && deviceForm.get('deviceModelName')?.touched">
+            Device Model Name is required.
+        </mat-error>
+      </mat-form-field>
+  
+      <div class="select-details-container">
+        <mat-form-field appearance="outline" class="select-details-input">
+        <mat-label>Device Type</mat-label>
+        <mat-select formControlName="deviceTypes">
+          <mat-option *ngFor="let type of deviceTypes" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="deviceForm.get('deviceTypes')?.touched && deviceForm.get('deviceTypes')?.invalid">
+          Device Type is required.
+        </mat-error>
+      </mat-form-field>
+    </div>
+      
+
+      <app-attachments></app-attachments>
+  
+      <br />
+  
+      
+      <div class="button-container">
+        <button mat-raised-button color="primary" type="submit" class="submit-btn">
+          Submit
+        </button>
+      </div>
+      
+    </form>
+  </div>
+  

@@ -1,0 +1,23 @@
+<div style="margin: 20px;">
+    <h2 style="text-align: center; margin-top: 0; margin-bottom: 30px;">Add New Tracker</h2>
+    <div>
+        <mat-form-field class="search-box" appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput type="text" [(ngModel)]="deviceName">
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="search-box" appearance="outline">
+            <mat-label>Select Company</mat-label>
+            <mat-select (selectionChange)="onCompanySelected($event)">
+              <mat-option>Select</mat-option>
+              @for (company of companies; track $index) {
+                <mat-option value={{company.companyId}}>{{company.companyName}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <button style="padding-left: 50px;padding-right: 50px;" mat-raised-button color="primary" (click)="submit()">Submit</button>
+    </div>
+</div>

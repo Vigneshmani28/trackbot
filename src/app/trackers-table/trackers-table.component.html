@@ -1,0 +1,59 @@
+<ng-container *ngIf="!isLoginPage(); else loginTemplate">
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav 
+      #drawer 
+      [mode]="isMobile ? 'over' : 'side'" 
+      [opened]="!isMobile"
+      class="sidenav" 
+      [class.shrunk]="isMobile || isCollapsed">
+      
+      <button mat-icon-button (click)="toggleSidenav()" class="toggle-button" matTooltip="{{ isCollapsed ? 'Expand Menu' : 'Collapse Menu' }}" matTooltipPosition="right">
+        <mat-icon>{{ isCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>      
+
+      <div class="sidenav-menu">
+        <mat-selection-list 
+          #shoes 
+          [multiple]="false" 
+          hideSingleSelectionIndicator="true" 
+          (selectionChange)="onMenuChange($event, drawer)">
+          
+          @for (menu of menuList; track menu) {
+            <mat-list-option 
+              [selected]="menu === mode" 
+              [value]="menu" 
+              (click)="navigate(menu)"
+              class="select-option"
+              [matTooltip]="isCollapsed ? menu : ''"
+              matTooltipPosition="right"
+              >
+              
+              <div class="menu-items">
+                <mat-icon>{{ getMenuIcon(menu) }}</mat-icon>
+                <span class="menu-text">{{ menu }}</span>
+              </div>
+            </mat-list-option>
+          }
+        </mat-selection-list>
+      </div>
+      
+    </mat-sidenav>
+
+    <mat-sidenav-content class="sidenav-content">
+      <button mat-icon-button (click)="drawer.toggle()" *ngIf="isMobile" class="menu-button">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <mat-divider vertical="true" *ngIf="!isMobile" />
+
+      <div class="content-wrapper">
+        <app-breadcrumb></app-breadcrumb>
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</ng-container>
+
+<ng-template #loginTemplate>
+  <router-outlet></router-outlet>
+</ng-template>

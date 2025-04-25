@@ -1,0 +1,34 @@
+.controls {
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.from-date-time-container,
+.to-date-time-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  flex: 1;
+  min-width: 140px;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+mat-checkbox {
+  display: block;
+  margin-top: 10px;
+}

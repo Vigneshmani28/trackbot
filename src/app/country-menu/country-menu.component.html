@@ -1,0 +1,120 @@
+<div class="map-menu-container">
+  <div class="menu-card">
+    <!-- Country Selection -->
+    <ng-container *ngIf="!isStateView && !isAirportView && !isWeatherView">
+      <div class="menu-header">
+        <h3>Select Country</h3>
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Search countries</mat-label>
+        <input matInput [(ngModel)]="searchText" (input)="filterCountries(searchText)" [matAutocomplete]="auto">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let country of filteredCountries" (click)="onSelectCountry(country)">
+          <div class="option-content">
+            <mat-icon class="option-icon">public</mat-icon>
+            <span>{{ country }}</span>
+          </div>
+        </mat-option>
+      </mat-autocomplete>
+
+      <div class="spinner" *ngIf="loadingCountries">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </ng-container>
+
+    <!-- State Selection -->
+    <ng-container *ngIf="isStateView && !isAirportView && !isWeatherView">
+      <div class="menu-header with-back">
+        <button mat-icon-button (click)="backToCountries()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h3>{{ selectedCountry }}</h3>
+      </div>
+
+      <div class="spinner" *ngIf="loadingStates">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+
+      <mat-selection-list *ngIf="!loadingStates">
+        <mat-list-item class="list-item" *ngFor="let state of states" (click)="onSelectState(state)">
+          <div class="option-content">
+            <span>{{ state }}</span>
+          </div>
+        </mat-list-item>
+      </mat-selection-list>
+    </ng-container>
+
+    <!-- Airport List -->
+    <ng-container *ngIf="isAirportView">
+      <div class="menu-header with-back">
+        <button mat-icon-button (click)="backToStates()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h3>{{ selectedState }} Airports</h3>
+      </div>
+
+      <div class="spinner" *ngIf="loadingAirports">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+
+      <div *ngIf="airportMessage && !loadingAirports" class="airport-message">
+        <mat-icon>info</mat-icon>
+        <span>{{ airportMessage }}</span>
+      </div>
+
+      <mat-selection-list *ngIf="airports.length > 0">
+        <mat-list-item class="list-item" *ngFor="let airport of airports" (click)="onSelectAirport(airport)">
+          <div class="option-content">
+            <mat-icon class="option-icon">flight</mat-icon>
+            <div class="airport-info">
+              <span class="airport-name">{{ airport.airport_name }}</span>
+              <span class="airport-code">{{ airport.airport_code || 'N/A' }}</span>
+            </div>
+          </div>
+        </mat-list-item>
+      </mat-selection-list>    
+    </ng-container>
+
+    <!-- Weather Data View -->
+    <ng-container *ngIf="isWeatherView">
+      <div class="menu-header with-back">
+        <button mat-icon-button (click)="backToAirports()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h3>Weather at {{ selectedAirport }}</h3>
+      </div>
+
+      <div class="spinner" *ngIf="loadingWeather">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+
+      <div *ngIf="weatherData && !loadingWeather" class="weather-container">
+        <div class="weather-main">
+          <div class="weather-temp">
+            {{ weatherData.current_weather.temperature}}°C
+          </div>
+          <div class="weather-description">
+            {{ getWeatherDescription(weatherData.current_weather.weathercode) }}
+          </div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-detail">
+            <mat-icon>air</mat-icon>
+            <span>{{ weatherData.current_weather.windspeed }} km/h</span>
+          </div>
+          <div class="weather-detail">
+            <mat-icon>navigation</mat-icon>
+            <span>{{ weatherData.current_weather.winddirection }}°</span>
+          </div>
+        </div>
+      </div>    
+
+      <div *ngIf="!weatherData && !loadingWeather" class="no-data">
+        <mat-icon>cloud_off</mat-icon>
+        <span>No weather data available</span>
+      </div>
+    </ng-container>
+  </div>
+</div>
